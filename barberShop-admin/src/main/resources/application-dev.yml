@@ -1,0 +1,9 @@
+mysql:
+  ssh:
+    host: 118.31.68.207
+    user: root
+    password: MC1999223pig
+    port: 22
+    local-port: 3307
+    remote-host: 127.0.0.1
+    remote-port: 3306
