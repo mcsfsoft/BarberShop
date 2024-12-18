@@ -1,11 +1,11 @@
 package com.mwsfot.web.controller.monitor;
 
+import com.mwsfot.framework.web.domain.Server;
+import com.mwsfot.system.common.core.domain.AjaxResult;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.framework.web.domain.Server;
 
 /**
  * 服务器监控

@@ -1,5 +1,8 @@
 package com.mwsfot.framework.config;
 
+import com.mwsfot.framework.interceptor.RepeatSubmitInterceptor;
+import com.mwsfot.system.common.config.SystemConfig;
+import com.mwsfot.system.common.constant.Constants;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +14,6 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import com.mwsfot.common.config.RuoYiConfig;
-import com.mwsfot.common.constant.Constants;
-import com.mwsfot.framework.interceptor.RepeatSubmitInterceptor;
 
 /**
  * 通用配置
@@ -31,7 +31,7 @@ public class ResourcesConfig implements WebMvcConfigurer
     {
         /** 本地文件上传路径 */
         registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**")
-                .addResourceLocations("file:" + RuoYiConfig.getProfile() + "/");
+            .addResourceLocations("file:" + SystemConfig.getProfile() + "/");
 
         /** swagger配置 */
         registry.addResourceHandler("/swagger-ui/**")

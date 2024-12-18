@@ -1,6 +1,6 @@
 package com.mwsfot.system.domain.vo;
 
-import com.mwsfot.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.StringUtils;
 
 /**
  * 路由显示信息

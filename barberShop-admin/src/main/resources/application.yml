@@ -1,15 +1,15 @@
 # 项目相关配置
-ruoyi:
+mwsfot:
   # 名称
-  name: RuoYi
+  name: 理发店管理系统
   # 版本
-  version: 3.8.8
+  version: 1.0.0
   # 版权年份
   copyrightYear: 2024
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
   profile: D:/ruoyi/uploadPath
   # 获取ip地址开关
-  addressEnabled: false
+  addressEnabled: true
   # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
 # 开发环境配置
@@ -51,7 +51,7 @@ spring:
     # 国际化资源文件路径
     basename: i18n/messages
   profiles:
-    active: druid
+    active: @active.profile@
   # 文件上传
   servlet:
     multipart:
@@ -64,29 +64,6 @@ spring:
     restart:
       # 热部署开关
       enabled: true
-  # redis 配置
-  redis:
-    # 地址
-    host: localhost
-    # 端口，默认为6379
-    port: 6379
-    # 数据库索引
-    database: 0
-    # 密码
-    password:
-    # 连接超时时间
-    timeout: 10s
-    lettuce:
-      pool:
-        # 连接池中的最小空闲连接
-        min-idle: 0
-        # 连接池中的最大空闲连接
-        max-idle: 8
-        # 连接池的最大数据库连接数
-        max-active: 8
-        # #连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-wait: -1ms
-
 # token配置
 token:
   # 令牌自定义标识
@@ -126,3 +103,31 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+aj:
+  # 详细参数见文档 https://ajcaptcha.beliefteam.cn/captcha-doc/captchaDoc/java.html#springboot
+  # 或com.anji.captcha.model.common
+  captcha:
+    # 滑块验证码底图地址
+    jigsaw: classpath:images/jigsaw
+    # 点选底图地址
+    pic-click: classpath:images/pic-click
+    # 缓存类型
+    cache-type: redis
+    type: default
+    # 水印
+    water-mark: ©2024 MWSFOT工作室 版权所有
+    #验证误差像素
+    slip-offset: 6
+    # 干扰项目, 0 关闭、 1 起作用
+    interference-options: 0
+    #文字大小
+    font-style: 25
+    req-frequency-limit-enable: false
+    req-get-lock-limit: 5
+    req-get-lock-seconds: 360
+    req-get-minute-limit: 100
+    req-check-minute-limit: 60
+    req-verify-minute-limit: 60
+    cache-number: 1000
+    #定时清除过期缓存 180秒
+    timing-clear: 180

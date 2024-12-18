@@ -1,5 +1,20 @@
 package com.mwsfot.framework.aspectj;
 
+import cn.hutool.core.util.IdUtil;
+import com.alibaba.fastjson2.JSON;
+import com.mwsfot.framework.manager.AsyncManager;
+import com.mwsfot.framework.manager.factory.AsyncFactory;
+import com.mwsfot.system.common.annotation.Log;
+import com.mwsfot.system.common.enums.BusinessStatus;
+import com.mwsfot.system.common.enums.HttpMethod;
+import com.mwsfot.system.common.filter.PropertyPreExcludeFilter;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.common.utils.ServletUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.ip.IpUtils;
+import com.mwsfot.system.domain.SysOperLog;
+import com.mwsfot.system.domain.entity.SysUser;
+import com.mwsfot.system.domain.model.LoginUser;
 import java.util.Collection;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -16,20 +31,6 @@ import org.springframework.core.NamedThreadLocal;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
-import com.alibaba.fastjson2.JSON;
-import com.mwsfot.common.annotation.Log;
-import com.mwsfot.common.core.domain.entity.SysUser;
-import com.mwsfot.common.core.domain.model.LoginUser;
-import com.mwsfot.common.enums.BusinessStatus;
-import com.mwsfot.common.enums.HttpMethod;
-import com.mwsfot.common.filter.PropertyPreExcludeFilter;
-import com.mwsfot.common.utils.SecurityUtils;
-import com.mwsfot.common.utils.ServletUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.ip.IpUtils;
-import com.mwsfot.framework.manager.AsyncManager;
-import com.mwsfot.framework.manager.factory.AsyncFactory;
-import com.mwsfot.system.domain.SysOperLog;
 
 /**
  * 操作日志记录处理
@@ -89,6 +90,7 @@ public class LogAspect
 
             // *========数据库日志=========*//
             SysOperLog operLog = new SysOperLog();
+            operLog.setOperId(IdUtil.getSnowflakeNextId());
             operLog.setStatus(BusinessStatus.SUCCESS.ordinal());
             // 请求的地址
             String ip = IpUtils.getIpAddr();

@@ -1,21 +1,21 @@
 package com.mwsfot.system.service.impl;
 
+import com.mwsfot.system.common.annotation.DataSource;
+import com.mwsfot.system.common.constant.CacheConstants;
+import com.mwsfot.system.common.constant.UserConstants;
+import com.mwsfot.system.common.core.redis.RedisCache;
+import com.mwsfot.system.common.core.text.Convert;
+import com.mwsfot.system.common.enums.DataSourceType;
+import com.mwsfot.system.common.exception.ServiceException;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.domain.SysConfig;
+import com.mwsfot.system.mapper.SysConfigMapper;
+import com.mwsfot.system.service.ISysConfigService;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.mwsfot.common.annotation.DataSource;
-import com.mwsfot.common.constant.CacheConstants;
-import com.mwsfot.common.constant.UserConstants;
-import com.mwsfot.common.core.redis.RedisCache;
-import com.mwsfot.common.core.text.Convert;
-import com.mwsfot.common.enums.DataSourceType;
-import com.mwsfot.common.exception.ServiceException;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.system.domain.SysConfig;
-import com.mwsfot.system.mapper.SysConfigMapper;
-import com.mwsfot.system.service.ISysConfigService;
 
 /**
  * 参数配置 服务层实现

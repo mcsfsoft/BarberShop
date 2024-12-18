@@ -1,5 +1,10 @@
 package com.mwsfot.framework.security.handle;
 
+import com.alibaba.fastjson2.JSON;
+import com.mwsfot.system.common.constant.HttpStatus;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.utils.ServletUtils;
+import com.mwsfot.system.common.utils.StringUtils;
 import java.io.IOException;
 import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
@@ -7,11 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import com.alibaba.fastjson2.JSON;
-import com.mwsfot.common.constant.HttpStatus;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.utils.ServletUtils;
-import com.mwsfot.common.utils.StringUtils;
 
 /**
  * 认证失败处理类 返回未授权

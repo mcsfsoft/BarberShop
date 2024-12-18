@@ -1,8 +1,8 @@
 package com.mwsfot.generator.util;
 
+import com.mwsfot.system.common.constant.Constants;
 import java.util.Properties;
 import org.apache.velocity.app.Velocity;
-import com.mwsfot.common.constant.Constants;
 
 /**
  * VelocityEngine工厂

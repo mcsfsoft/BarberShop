@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mwsfot.system.mapper.SysTenantMapper">
+
+    <resultMap type="SysTenantDto" id="SysTenantResult">
+        <result property="tenantId" column="tenant_id"/>
+        <result property="tenantName" column="tenant_name"/>
+        <result property="address" column="address"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="openTime" column="open_time"/>
+        <result property="isFix" column="is_fix"/>
+        <result property="expireTime" column="expire_time"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectSysTenantVo">
+        select tenant_id,
+               tenant_name,
+               is_fix,
+               address,
+               phone_number,
+               open_time,
+               expire_time,
+               remark,
+               status,
+               del_flag,
+               create_by,
+               create_time,
+               update_by,
+               update_time
+        from sys_tenant
+    </sql>
+
+    <select id="selectSysTenantList" parameterType="SysTenant" resultMap="SysTenantResult">
+        <include refid="selectSysTenantVo"/>
+        <where>
+            <if test="tenantName != null  and tenantName != ''">and tenant_name like concat('%', #{tenantName}, '%')
+            </if>
+            <if test="address != null  and address != ''">and address = #{address}</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">and phone_number = #{phoneNumber}</if>
+            <if test="openTime != null ">and open_time = #{openTime}</if>
+            <if test="expireTime != null ">and expire_time = #{expireTime}</if>
+            <if test="remark != null  and remark != ''">and remark = #{remark}</if>
+            <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectSysTenantByTenantId" parameterType="Long" resultMap="SysTenantResult">
+        <include refid="selectSysTenantVo"/>
+        where tenant_id = #{tenantId}
+    </select>
+
+    <select id="selectPlatformList" resultType="com.mwsfot.system.domain.vo.TenantVo">
+        select tenant_id as tenantId, tenant_name as tenantName from sys_tenant
+        <where>
+            <if test="tenantName != null and tenantName != ''">
+                and tenant_name like concat('%',#{tenantName},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertSysTenant" parameterType="SysTenant">
+        insert into sys_tenant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tenantId != null">tenant_id,</if>
+            <if test="tenantName != null and tenantName != ''">tenant_name,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="phoneNumber != null and phoneNumber != ''">phone_number,</if>
+            <if test="openTime != null">open_time,</if>
+            <if test="expireTime != null">expire_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isFix != null">is_fix,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tenantId != null">#{tenantId},</if>
+            <if test="tenantName != null and tenantName != ''">#{tenantName},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="phoneNumber != null and phoneNumber != ''">#{phoneNumber},</if>
+            <if test="openTime != null">#{openTime},</if>
+            <if test="expireTime != null">#{expireTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isFix != null">#{isFix},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysTenant" parameterType="SysTenant">
+        update sys_tenant
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tenantName != null and tenantName != ''">tenant_name = #{tenantName},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="phoneNumber != null and phoneNumber != ''">phone_number = #{phoneNumber},</if>
+            <if test="openTime != null">open_time = #{openTime},</if>
+            <if test="expireTime != null">expire_time = #{expireTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where tenant_id = #{tenantId}
+    </update>
+
+    <delete id="deleteSysTenantByTenantId" parameterType="Long">
+        delete
+        from sys_tenant
+        where tenant_id = #{tenantId}
+    </delete>
+
+    <delete id="deleteSysTenantByTenantIds" parameterType="String">
+        delete from sys_tenant where tenant_id in
+        <foreach item="tenantId" collection="array" open="(" separator="," close=")">
+            #{tenantId}
+        </foreach>
+    </delete>
+</mapper>

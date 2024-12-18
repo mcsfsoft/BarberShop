@@ -1,5 +1,12 @@
 package com.mwsfot.framework.web.exception;
 
+import com.mwsfot.system.common.constant.HttpStatus;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.core.text.Convert;
+import com.mwsfot.system.common.exception.DemoModeException;
+import com.mwsfot.system.common.exception.ServiceException;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.html.EscapeUtil;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +18,6 @@ import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import com.mwsfot.common.constant.HttpStatus;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.core.text.Convert;
-import com.mwsfot.common.exception.DemoModeException;
-import com.mwsfot.common.exception.ServiceException;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.html.EscapeUtil;
 
 /**
  * 全局异常处理器

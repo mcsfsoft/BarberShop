@@ -1,12 +1,25 @@
 <template>
   <div class="app-container">
+      <!--部门数据-->
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
+      <el-form-item label="所属平台" prop="tenantId">
+        <el-select v-model="queryParams.tenantId" placeholder="请选择平台" filterable
+                   remote
+                   :remote-method="queryTenantAsync">
+          <el-option
+              v-for="tenant in tenantList"
+              :key="tenant.tenantId"
+              :label="tenant.tenantName"
+              :value="tenant.tenantId"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="部门名称" prop="deptName">
         <el-input
-          v-model="queryParams.deptName"
-          placeholder="请输入部门名称"
-          clearable
-          @keyup.enter.native="handleQuery"
+            v-model="queryParams.deptName"
+            placeholder="请输入部门名称"
+            clearable
+            @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
@@ -70,39 +83,41 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <span v-show="scope.row.isFix === 0">
           <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:dept:edit']"
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['system:dept:edit']"
           >修改</el-button>
           <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-plus"
-            @click="handleAdd(scope.row)"
-            v-hasPermi="['system:dept:add']"
+              size="mini"
+              type="text"
+              icon="el-icon-plus"
+              @click="handleAdd(scope.row)"
+              v-hasPermi="['system:dept:add']"
           >新增</el-button>
           <el-button
-            v-if="scope.row.parentId != 0"
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:dept:remove']"
+              v-if="scope.row.parentId != 0"
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+              v-hasPermi="['system:dept:remove']"
           >删除</el-button>
+            </span>
         </template>
       </el-table-column>
     </el-table>
-
     <!-- 添加或修改部门对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
-          <el-col :span="24" v-if="form.parentId !== 0">
+          <el-col :span="24" v-if="form.parentId !== '0'">
             <el-form-item label="上级部门" prop="parentId">
-              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择上级部门" />
+              <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer"
+                          placeholder="选择上级部门"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -158,18 +173,21 @@
 </template>
 
 <script>
-import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild } from "@/api/system/dept";
+import {addDept, delDept, getDept, listDept, listDeptExcludeChild, updateDept} from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {getTenantList} from '@/api/system/tenant';
 
 export default {
   name: "Dept",
   dicts: ['sys_normal_disable'],
-  components: { Treeselect },
+  components: {Treeselect},
   data() {
     return {
       // 遮罩层
       loading: true,
+      //租户列表
+      tenantList: [],
       // 显示搜索条件
       showSearch: true,
       // 表格树数据
@@ -186,6 +204,7 @@ export default {
       refreshTable: true,
       // 查询参数
       queryParams: {
+        tenantId: undefined,
         deptName: undefined,
         status: undefined
       },
@@ -219,10 +238,29 @@ export default {
       }
     };
   },
+  watch: {
+    'queryParams.tenantId'(val) {
+      this.getList()
+    }
+  },
   created() {
+    this.queryParams.tenantId = this.$store.getters.tenantId;
+    this.queryTenantAsync();
     this.getList();
   },
   methods: {
+    /**
+     * 远程查询租户列表
+     * @param query 模糊搜索字段
+     */
+    queryTenantAsync(query) {
+      this.tenantLoading = true;
+      getTenantList({'tenantName': query}).then(res => {
+        this.tenantList = res.data;
+      }).catch(e => {
+        console.error(e)
+      })
+    },
     /** 查询部门列表 */
     getList() {
       this.loading = true;
@@ -257,6 +295,7 @@ export default {
         leader: undefined,
         phone: undefined,
         email: undefined,
+        tenantId: undefined,
         status: "0"
       };
       this.resetForm("form");
@@ -273,12 +312,14 @@ export default {
     /** 新增按钮操作 */
     handleAdd(row) {
       this.reset();
-      if (row != undefined) {
+      if (row !== undefined) {
         this.form.parentId = row.deptId;
       }
+      this.form.tenantId = this.queryParams.tenantId;
+      this.form.tenantName = this.tenantList.find(item => item.tenantId === this.queryParams.tenantId).tenantName;
       this.open = true;
       this.title = "添加部门";
-      listDept().then(response => {
+      listDept({'tenantId': this.queryParams.tenantId}).then(response => {
         this.deptOptions = this.handleTree(response.data, "deptId");
       });
     },
@@ -293,14 +334,16 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      getDept(row.deptId).then(response => {
+      getDept(row.deptId, row.tenantId).then(response => {
         this.form = response.data;
+        this.form.tenantId = row.tenantId;
+        this.form.tenantName = this.tenantList.find(item => item.tenantId === row.tenantId).tenantName;
         this.open = true;
         this.title = "修改部门";
-        listDeptExcludeChild(row.deptId).then(response => {
+        listDeptExcludeChild(row.deptId, row.tenantId).then(response => {
           this.deptOptions = this.handleTree(response.data, "deptId");
           if (this.deptOptions.length == 0) {
-            const noResultsOptions = { deptId: this.form.parentId, deptName: this.form.parentName, children: [] };
+            const noResultsOptions = {deptId: this.form.parentId, deptName: this.form.parentName, children: []};
             this.deptOptions.push(noResultsOptions);
           }
         });
@@ -329,7 +372,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       this.$modal.confirm('是否确认删除名称为"' + row.deptName + '"的数据项？').then(function() {
-        return delDept(row.deptId);
+        return delDept(row.deptId, row.tenantId);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

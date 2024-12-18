@@ -1,9 +1,9 @@
 package com.mwsfot.system.service;
 
+import com.mwsfot.system.domain.SysUserRole;
+import com.mwsfot.system.domain.entity.SysRole;
 import java.util.List;
 import java.util.Set;
-import com.mwsfot.common.core.domain.entity.SysRole;
-import com.mwsfot.system.domain.SysUserRole;
 
 /**
  * 角色业务层
@@ -22,15 +22,24 @@ public interface ISysRoleService
 
     /**
      * 根据用户ID查询角色列表
-     * 
-     * @param userId 用户ID
+     *
+     * @param userId   用户ID
+     * @param tenantId 租户ID
      * @return 角色列表
      */
-    public List<SysRole> selectRolesByUserId(Long userId);
+    public List<SysRole> selectRolesByUserIdAndTenantId(Long userId, Long tenantId);
+
+    /**
+     * 根据租户ID查询当前所属租户可用角色
+     *
+     * @param tenantId 租户ID
+     * @return 角色列表
+     */
+    public int selectTenantRoleNumsByTenantId(Long tenantId);
 
     /**
      * 根据用户ID查询角色权限
-     * 
+     *
      * @param userId 用户ID
      * @return 权限列表
      */
@@ -38,10 +47,10 @@ public interface ISysRoleService
 
     /**
      * 查询所有角色
-     * 
+     *
      * @return 角色列表
      */
-    public List<SysRole> selectRoleAll();
+    public List<SysRole> selectRoleAll(Long tenantId);
 
     /**
      * 根据用户ID获取角色选择框列表
@@ -164,10 +173,17 @@ public interface ISysRoleService
 
     /**
      * 批量选择授权用户角色
-     * 
-     * @param roleId 角色ID
+     *
+     * @param roleId  角色ID
      * @param userIds 需要删除的用户数据ID
      * @return 结果
      */
     public int insertAuthUsers(Long roleId, Long[] userIds);
+
+    /**
+     * 校验当前用户是否能修改该租户下角色
+     *
+     * @param role 角色
+     */
+    void checkRoleTenantAllowed(SysRole role);
 }

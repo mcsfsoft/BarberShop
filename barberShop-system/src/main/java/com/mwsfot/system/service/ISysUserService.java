@@ -1,7 +1,7 @@
 package com.mwsfot.system.service;
 
+import com.mwsfot.system.domain.entity.SysUser;
 import java.util.List;
-import com.mwsfot.common.core.domain.entity.SysUser;
 
 /**
  * 用户 业务层
@@ -36,11 +36,11 @@ public interface ISysUserService
 
     /**
      * 通过用户名查询用户
-     * 
+     *
      * @param userName 用户名
      * @return 用户对象信息
      */
-    public SysUser selectUserByUserName(String userName);
+    public SysUser selectUserByUserNameAndTenantId(String userName, Long tenantId);
 
     /**
      * 通过用户ID查询用户
@@ -52,19 +52,19 @@ public interface ISysUserService
 
     /**
      * 根据用户ID查询用户所属角色组
-     * 
+     *
      * @param userName 用户名
      * @return 结果
      */
-    public String selectUserRoleGroup(String userName);
+    public String selectUserRoleGroup(Long userId);
 
     /**
      * 根据用户ID查询用户所属岗位组
-     * 
+     *
      * @param userName 用户名
      * @return 结果
      */
-    public String selectUserPostGroup(String userName);
+    public String selectUserPostGroup(Long userId);
 
     /**
      * 校验用户名称是否唯一
@@ -92,14 +92,21 @@ public interface ISysUserService
 
     /**
      * 校验用户是否允许操作
-     * 
+     *
      * @param user 用户信息
      */
     public void checkUserAllowed(SysUser user);
 
     /**
+     * 校验当前租户用户是否允许操作
+     *
+     * @param user 用户信息
+     */
+    public void checkUserTenantAllowed(SysUser user);
+
+    /**
      * 校验用户是否有数据权限
-     * 
+     *
      * @param userId 用户id
      */
     public void checkUserDataScope(Long userId);
@@ -196,11 +203,13 @@ public interface ISysUserService
 
     /**
      * 导入用户数据
-     * 
+     *
      * @param userList 用户数据列表
      * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
      * @param operName 操作用户
+     * @param tenantId 租户ID
      * @return 结果
      */
-    public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName);
+    public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName,
+                             Long tenantId);
 }

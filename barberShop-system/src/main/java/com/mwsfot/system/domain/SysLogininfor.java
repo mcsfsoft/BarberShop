@@ -1,10 +1,9 @@
 package com.mwsfot.system.domain;
 
-import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mwsfot.common.annotation.Excel;
-import com.mwsfot.common.annotation.Excel.ColumnType;
-import com.mwsfot.common.core.domain.BaseEntity;
+import com.mwsfot.system.common.annotation.Excel;
+import com.mwsfot.system.common.core.domain.BaseEntity;
+import java.util.Date;
 
 /**
  * 系统访问记录表 sys_logininfor
@@ -16,7 +15,7 @@ public class SysLogininfor extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** ID */
-    @Excel(name = "序号", cellType = ColumnType.NUMERIC)
+    @Excel(name = "序号")
     private Long infoId;
 
     /** 用户账号 */

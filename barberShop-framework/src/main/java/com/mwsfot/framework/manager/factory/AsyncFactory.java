@@ -1,20 +1,21 @@
 package com.mwsfot.framework.manager.factory;
 
-import java.util.TimerTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.mwsfot.common.constant.Constants;
-import com.mwsfot.common.utils.LogUtils;
-import com.mwsfot.common.utils.ServletUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.ip.AddressUtils;
-import com.mwsfot.common.utils.ip.IpUtils;
-import com.mwsfot.common.utils.spring.SpringUtils;
+import cn.hutool.core.util.IdUtil;
+import com.mwsfot.system.common.constant.Constants;
+import com.mwsfot.system.common.utils.LogUtils;
+import com.mwsfot.system.common.utils.ServletUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.ip.AddressUtils;
+import com.mwsfot.system.common.utils.ip.IpUtils;
+import com.mwsfot.system.common.utils.spring.SpringUtils;
 import com.mwsfot.system.domain.SysLogininfor;
 import com.mwsfot.system.domain.SysOperLog;
 import com.mwsfot.system.service.ISysLogininforService;
 import com.mwsfot.system.service.ISysOperLogService;
 import eu.bitwalker.useragentutils.UserAgent;
+import java.util.TimerTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 异步工厂（产生任务用）
@@ -59,6 +60,7 @@ public class AsyncFactory
                 String browser = userAgent.getBrowser().getName();
                 // 封装对象
                 SysLogininfor logininfor = new SysLogininfor();
+                logininfor.setInfoId(IdUtil.getSnowflakeNextId());
                 logininfor.setUserName(username);
                 logininfor.setIpaddr(ip);
                 logininfor.setLoginLocation(address);

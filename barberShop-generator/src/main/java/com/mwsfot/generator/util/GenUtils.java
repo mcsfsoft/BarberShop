@@ -1,12 +1,12 @@
 package com.mwsfot.generator.util;
 
-import java.util.Arrays;
-import org.apache.commons.lang3.RegExUtils;
-import com.mwsfot.common.constant.GenConstants;
-import com.mwsfot.common.utils.StringUtils;
 import com.mwsfot.generator.config.GenConfig;
 import com.mwsfot.generator.domain.GenTable;
 import com.mwsfot.generator.domain.GenTableColumn;
+import com.mwsfot.system.common.constant.GenConstants;
+import com.mwsfot.system.common.utils.StringUtils;
+import java.util.Arrays;
+import org.apache.commons.lang3.RegExUtils;
 
 /**
  * 代码生成器 工具类

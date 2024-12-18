@@ -1,10 +1,10 @@
 package com.mwsfot.quartz.domain;
 
+import com.mwsfot.system.common.annotation.Excel;
+import com.mwsfot.system.common.core.domain.BaseEntity;
 import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.mwsfot.common.annotation.Excel;
-import com.mwsfot.common.core.domain.BaseEntity;
 
 /**
  * 定时任务调度日志表 sys_job_log

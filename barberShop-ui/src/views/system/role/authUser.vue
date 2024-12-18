@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
      <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="用户名称" prop="userName">
+      <el-form-item label="登录名称" prop="userName">
         <el-input
-          v-model="queryParams.userName"
-          placeholder="请输入用户名称"
-          clearable
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
+            v-model="queryParams.userName"
+            placeholder="请输入用户名称"
+            clearable
+            style="width: 240px"
+            @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="手机号码" prop="phonenumber">
@@ -61,7 +61,7 @@
 
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
+      <el-table-column label="登录名称" prop="userName" :show-overflow-tooltip="true"/>
       <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
       <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />
       <el-table-column label="手机" prop="phonenumber" :show-overflow-tooltip="true" />
@@ -89,18 +89,19 @@
     </el-table>
 
     <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
     />
-    <select-user ref="select" :roleId="queryParams.roleId" @ok="handleQuery" />
+    <!--tip: 传递prop 参数这样使用-->
+    <select-user ref="select" :roleId="queryParams.roleId" :tenantId="queryParams.tenantId" @ok="handleQuery"/>
   </div>
 </template>
 
 <script>
-import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/system/role";
+import {allocatedUserList, authUserCancel, authUserCancelAll} from "@/api/system/role";
 import selectUser from "./selectUser";
 
 export default {
@@ -126,15 +127,23 @@ export default {
         pageNum: 1,
         pageSize: 10,
         roleId: undefined,
+        tenantId: undefined,
         userName: undefined,
         phonenumber: undefined
       }
     };
   },
   created() {
-    const roleId = this.$route.params && this.$route.params.roleId;
-    if (roleId) {
+    const {roleId, tenantId} = this.$route.params;
+    //tip: 若依关闭当前页面并返回上一级方法
+    if (tenantId !== this.$store.getters.tenantId && this.$store.getters.tenantId !== '1') {
+      this.$router.back();
+      const obj = {path: 'user/' + roleId + '/' + tenantId}
+      this.$tab.closeOpenPage(obj);
+    }
+    if (roleId && tenantId) {
       this.queryParams.roleId = roleId;
+      this.queryParams.tenantId = tenantId;
       this.getList();
     }
   },

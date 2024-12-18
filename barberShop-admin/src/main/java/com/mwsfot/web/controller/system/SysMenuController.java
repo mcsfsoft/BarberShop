@@ -1,5 +1,14 @@
 package com.mwsfot.web.controller.system;
 
+import com.mwsfot.system.common.annotation.Log;
+import com.mwsfot.system.common.constant.UserConstants;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.enums.BusinessType;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.controller.BaseController;
+import com.mwsfot.system.domain.dto.SysMenuDto;
+import com.mwsfot.system.domain.entity.SysMenu;
+import com.mwsfot.system.service.ISysMenuService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,14 +21,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.mwsfot.common.annotation.Log;
-import com.mwsfot.common.constant.UserConstants;
-import com.mwsfot.common.core.controller.BaseController;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.core.domain.entity.SysMenu;
-import com.mwsfot.common.enums.BusinessType;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.system.service.ISysMenuService;
 
 /**
  * 菜单信息
@@ -38,8 +39,8 @@ public class SysMenuController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:menu:list')")
     @GetMapping("/list")
-    public AjaxResult list(SysMenu menu)
-    {
+    public AjaxResult list(SysMenuDto menu) {
+        checkIsAllowTenantId(menu.getTenantId());
         List<SysMenu> menus = menuService.selectMenuList(menu, getUserId());
         return success(menus);
     }
@@ -58,8 +59,8 @@ public class SysMenuController extends BaseController
      * 获取菜单下拉树列表
      */
     @GetMapping("/treeselect")
-    public AjaxResult treeselect(SysMenu menu)
-    {
+    public AjaxResult treeselect(SysMenuDto menu) {
+        checkIsAllowTenantId(menu.getTenantId());
         List<SysMenu> menus = menuService.selectMenuList(menu, getUserId());
         return success(menuService.buildMenuTreeSelect(menus));
     }

@@ -1,21 +1,21 @@
 package com.mwsfot.framework.aspectj;
 
+import com.mwsfot.framework.security.context.PermissionContextHolder;
+import com.mwsfot.system.common.annotation.DataScope;
+import com.mwsfot.system.common.constant.UserConstants;
+import com.mwsfot.system.common.core.domain.BaseEntity;
+import com.mwsfot.system.common.core.text.Convert;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.domain.entity.SysRole;
+import com.mwsfot.system.domain.entity.SysUser;
+import com.mwsfot.system.domain.model.LoginUser;
 import java.util.ArrayList;
 import java.util.List;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
-import com.mwsfot.common.annotation.DataScope;
-import com.mwsfot.common.constant.UserConstants;
-import com.mwsfot.common.core.domain.BaseEntity;
-import com.mwsfot.common.core.domain.entity.SysRole;
-import com.mwsfot.common.core.domain.entity.SysUser;
-import com.mwsfot.common.core.domain.model.LoginUser;
-import com.mwsfot.common.core.text.Convert;
-import com.mwsfot.common.utils.SecurityUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.framework.security.context.PermissionContextHolder;
 
 /**
  * 数据过滤处理

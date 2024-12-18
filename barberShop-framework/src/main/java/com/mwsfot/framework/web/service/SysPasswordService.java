@@ -1,17 +1,17 @@
 package com.mwsfot.framework.web.service;
 
+import com.mwsfot.framework.security.context.AuthenticationContextHolder;
+import com.mwsfot.system.common.constant.CacheConstants;
+import com.mwsfot.system.common.core.redis.RedisCache;
+import com.mwsfot.system.common.exception.user.UserPasswordNotMatchException;
+import com.mwsfot.system.common.exception.user.UserPasswordRetryLimitExceedException;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.domain.entity.SysUser;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import com.mwsfot.common.constant.CacheConstants;
-import com.mwsfot.common.core.domain.entity.SysUser;
-import com.mwsfot.common.core.redis.RedisCache;
-import com.mwsfot.common.exception.user.UserPasswordNotMatchException;
-import com.mwsfot.common.exception.user.UserPasswordRetryLimitExceedException;
-import com.mwsfot.common.utils.SecurityUtils;
-import com.mwsfot.framework.security.context.AuthenticationContextHolder;
 
 /**
  * 登录密码方法

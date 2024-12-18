@@ -1,5 +1,13 @@
 package com.mwsfot.framework.interceptor.impl;
 
+import com.alibaba.fastjson2.JSON;
+import com.mwsfot.framework.interceptor.RepeatSubmitInterceptor;
+import com.mwsfot.system.common.annotation.RepeatSubmit;
+import com.mwsfot.system.common.constant.CacheConstants;
+import com.mwsfot.system.common.core.redis.RedisCache;
+import com.mwsfot.system.common.filter.RepeatedlyRequestWrapper;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.http.HttpHelper;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -7,14 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import com.alibaba.fastjson2.JSON;
-import com.mwsfot.common.annotation.RepeatSubmit;
-import com.mwsfot.common.constant.CacheConstants;
-import com.mwsfot.common.core.redis.RedisCache;
-import com.mwsfot.common.filter.RepeatedlyRequestWrapper;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.http.HttpHelper;
-import com.mwsfot.framework.interceptor.RepeatSubmitInterceptor;
 
 /**
  * 判断请求url和数据是否和上一次相同，

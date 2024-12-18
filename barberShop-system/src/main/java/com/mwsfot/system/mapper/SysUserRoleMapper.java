@@ -1,14 +1,16 @@
 package com.mwsfot.system.mapper;
 
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 import com.mwsfot.system.domain.SysUserRole;
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户与角色关联表 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysUserRoleMapper
 {
     /**

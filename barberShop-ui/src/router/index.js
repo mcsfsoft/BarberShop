@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
-Vue.use(Router)
-
 /* Layout */
 import Layout from '@/layout'
+
+Vue.use(Router)
 
 /**
  * Note: 路由配置项
@@ -99,10 +98,10 @@ export const dynamicRoutes = [
     permissions: ['system:user:edit'],
     children: [
       {
-        path: 'role/:userId(\\d+)',
+        path: 'role/:userId(\\d+)/:tenantId(\\d+)',
         component: () => import('@/views/system/user/authRole'),
         name: 'AuthRole',
-        meta: { title: '分配角色', activeMenu: '/system/user' }
+        meta: {title: '分配角色', activeMenu: '/system/user'}
       }
     ]
   },
@@ -113,10 +112,10 @@ export const dynamicRoutes = [
     permissions: ['system:role:edit'],
     children: [
       {
-        path: 'user/:roleId(\\d+)',
+        path: 'user/:roleId(\\d+)/:tenantId(\\d+)',
         component: () => import('@/views/system/role/authUser'),
         name: 'AuthUser',
-        meta: { title: '分配用户', activeMenu: '/system/role' }
+        meta: {title: '分配用户', activeMenu: '/system/role'}
       }
     ]
   },

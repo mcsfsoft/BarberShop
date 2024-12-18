@@ -1,14 +1,14 @@
 package com.mwsfot.web.core.config;
 
+import com.mwsfot.system.common.config.SystemConfig;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.mwsfot.common.config.RuoYiConfig;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -30,9 +30,11 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 public class SwaggerConfig
 {
-    /** 系统基础配置 */
+    /**
+     * 系统基础配置
+     */
     @Autowired
-    private RuoYiConfig ruoyiConfig;
+    private SystemConfig ruoyiConfig;
 
     /** 是否开启swagger */
     @Value("${swagger.enabled}")

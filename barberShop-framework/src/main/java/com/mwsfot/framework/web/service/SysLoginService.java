@@ -1,5 +1,24 @@
 package com.mwsfot.framework.web.service;
 
+import cn.hutool.core.text.StrPool;
+import com.mwsfot.framework.manager.AsyncManager;
+import com.mwsfot.framework.manager.factory.AsyncFactory;
+import com.mwsfot.framework.security.context.AuthenticationContextHolder;
+import com.mwsfot.system.common.constant.Constants;
+import com.mwsfot.system.common.constant.UserConstants;
+import com.mwsfot.system.common.core.redis.RedisCache;
+import com.mwsfot.system.common.exception.ServiceException;
+import com.mwsfot.system.common.exception.user.BlackListException;
+import com.mwsfot.system.common.exception.user.UserNotExistsException;
+import com.mwsfot.system.common.exception.user.UserPasswordNotMatchException;
+import com.mwsfot.system.common.utils.DateUtils;
+import com.mwsfot.system.common.utils.MessageUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.ip.IpUtils;
+import com.mwsfot.system.domain.entity.SysUser;
+import com.mwsfot.system.domain.model.LoginUser;
+import com.mwsfot.system.service.ISysConfigService;
+import com.mwsfot.system.service.ISysUserService;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,27 +26,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import com.mwsfot.common.constant.CacheConstants;
-import com.mwsfot.common.constant.Constants;
-import com.mwsfot.common.constant.UserConstants;
-import com.mwsfot.common.core.domain.entity.SysUser;
-import com.mwsfot.common.core.domain.model.LoginUser;
-import com.mwsfot.common.core.redis.RedisCache;
-import com.mwsfot.common.exception.ServiceException;
-import com.mwsfot.common.exception.user.BlackListException;
-import com.mwsfot.common.exception.user.CaptchaException;
-import com.mwsfot.common.exception.user.CaptchaExpireException;
-import com.mwsfot.common.exception.user.UserNotExistsException;
-import com.mwsfot.common.exception.user.UserPasswordNotMatchException;
-import com.mwsfot.common.utils.DateUtils;
-import com.mwsfot.common.utils.MessageUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.ip.IpUtils;
-import com.mwsfot.framework.manager.AsyncManager;
-import com.mwsfot.framework.manager.factory.AsyncFactory;
-import com.mwsfot.framework.security.context.AuthenticationContextHolder;
-import com.mwsfot.system.service.ISysConfigService;
-import com.mwsfot.system.service.ISysUserService;
 
 /**
  * 登录校验方法
@@ -54,24 +52,22 @@ public class SysLoginService
 
     /**
      * 登录验证
-     * 
+     *
      * @param username 用户名
      * @param password 密码
-     * @param code 验证码
-     * @param uuid 唯一标识
+     * @param code     验证码
+     * @param uuid     唯一标识
      * @return 结果
      */
-    public String login(String username, String password, String code, String uuid)
-    {
-        // 验证码校验
-        validateCaptcha(username, code, uuid);
+    public String login(String username, String password, Long tenantId) {
         // 登录前置校验
         loginPreCheck(username, password);
         // 用户验证
         Authentication authentication = null;
-        try
-        {
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+        try {
+            String loginData = username + StrPool.COLON + tenantId;
+            UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginData, password);
             AuthenticationContextHolder.setContext(authenticationToken);
             // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
             authentication = authenticationManager.authenticate(authenticationToken);
@@ -98,35 +94,6 @@ public class SysLoginService
         recordLoginInfo(loginUser.getUserId());
         // 生成token
         return tokenService.createToken(loginUser);
-    }
-
-    /**
-     * 校验验证码
-     * 
-     * @param username 用户名
-     * @param code 验证码
-     * @param uuid 唯一标识
-     * @return 结果
-     */
-    public void validateCaptcha(String username, String code, String uuid)
-    {
-        boolean captchaEnabled = configService.selectCaptchaEnabled();
-        if (captchaEnabled)
-        {
-            String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(uuid, "");
-            String captcha = redisCache.getCacheObject(verifyKey);
-            if (captcha == null)
-            {
-                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.expire")));
-                throw new CaptchaExpireException();
-            }
-            redisCache.deleteObject(verifyKey);
-            if (!code.equalsIgnoreCase(captcha))
-            {
-                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error")));
-                throw new CaptchaException();
-            }
-        }
     }
 
     /**

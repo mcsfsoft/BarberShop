@@ -1,16 +1,16 @@
 package com.mwsfot.framework.web.domain;
 
-import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import com.mwsfot.common.utils.Arith;
-import com.mwsfot.common.utils.ip.IpUtils;
 import com.mwsfot.framework.web.domain.server.Cpu;
 import com.mwsfot.framework.web.domain.server.Jvm;
 import com.mwsfot.framework.web.domain.server.Mem;
 import com.mwsfot.framework.web.domain.server.Sys;
 import com.mwsfot.framework.web.domain.server.SysFile;
+import com.mwsfot.system.common.utils.Arith;
+import com.mwsfot.system.common.utils.ip.IpUtils;
+import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.CentralProcessor.TickType;

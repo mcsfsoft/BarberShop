@@ -1,16 +1,16 @@
 package ${packageName}.service;
 
 import java.util.List;
-import ${packageName}.domain.${ClassName};
+
+import ${packageName}.domain.entity.${ClassName};
 
 /**
  * ${functionName}Service接口
- * 
+ *
  * @author ${author}
  * @date ${datetime}
  */
-public interface I${ClassName}Service 
-{
+public interface I${ClassName}Service {
     /**
      * 查询${functionName}
      * 

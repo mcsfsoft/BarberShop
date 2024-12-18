@@ -1,7 +1,7 @@
 package com.mwsfot.quartz.task;
 
+import com.mwsfot.system.common.utils.StringUtils;
 import org.springframework.stereotype.Component;
-import com.mwsfot.common.utils.StringUtils;
 
 /**
  * 定时任务调度测试

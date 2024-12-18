@@ -1,6 +1,6 @@
 package com.mwsfot.framework.web.domain.server;
 
-import com.mwsfot.common.utils.Arith;
+import com.mwsfot.system.common.utils.Arith;
 
 /**
  * CPU相关信息

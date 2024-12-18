@@ -1,10 +1,10 @@
 package com.mwsfot.system.service.impl;
 
-import org.springframework.stereotype.Service;
-import com.mwsfot.common.core.domain.model.LoginUser;
-import com.mwsfot.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.StringUtils;
 import com.mwsfot.system.domain.SysUserOnline;
+import com.mwsfot.system.domain.model.LoginUser;
 import com.mwsfot.system.service.ISysUserOnlineService;
+import org.springframework.stereotype.Service;
 
 /**
  * 在线用户 服务层处理

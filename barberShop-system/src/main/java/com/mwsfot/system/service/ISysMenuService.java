@@ -1,10 +1,11 @@
 package com.mwsfot.system.service;
 
+import com.mwsfot.system.common.core.domain.TreeSelect;
+import com.mwsfot.system.domain.dto.SysMenuDto;
+import com.mwsfot.system.domain.entity.SysMenu;
+import com.mwsfot.system.domain.vo.RouterVo;
 import java.util.List;
 import java.util.Set;
-import com.mwsfot.common.core.domain.TreeSelect;
-import com.mwsfot.common.core.domain.entity.SysMenu;
-import com.mwsfot.system.domain.vo.RouterVo;
 
 /**
  * 菜单 业务层
@@ -23,12 +24,12 @@ public interface ISysMenuService
 
     /**
      * 根据用户查询系统菜单列表
-     * 
-     * @param menu 菜单信息
+     *
+     * @param menu   菜单信息
      * @param userId 用户ID
      * @return 菜单列表
      */
-    public List<SysMenu> selectMenuList(SysMenu menu, Long userId);
+    public List<SysMenu> selectMenuList(SysMenuDto menu, Long userId);
 
     /**
      * 根据用户ID查询权限

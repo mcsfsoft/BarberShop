@@ -1,7 +1,7 @@
 package com.mwsfot.system.service;
 
-import java.util.List;
 import com.mwsfot.system.domain.SysPost;
+import java.util.List;
 
 /**
  * 岗位信息 服务层
@@ -19,8 +19,8 @@ public interface ISysPostService
     public List<SysPost> selectPostList(SysPost post);
 
     /**
-     * 查询所有岗位
-     * 
+     * 查询当前平台对应的所有岗位
+     *
      * @return 岗位列表
      */
     public List<SysPost> selectPostAll();

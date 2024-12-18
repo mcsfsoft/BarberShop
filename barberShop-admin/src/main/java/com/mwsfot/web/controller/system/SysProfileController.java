@@ -1,5 +1,18 @@
 package com.mwsfot.web.controller.system;
 
+import com.mwsfot.framework.web.service.TokenService;
+import com.mwsfot.system.common.annotation.Log;
+import com.mwsfot.system.common.config.SystemConfig;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.enums.BusinessType;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.file.FileUploadUtils;
+import com.mwsfot.system.common.utils.file.MimeTypeUtils;
+import com.mwsfot.system.controller.BaseController;
+import com.mwsfot.system.domain.entity.SysUser;
+import com.mwsfot.system.domain.model.LoginUser;
+import com.mwsfot.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,19 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.mwsfot.common.annotation.Log;
-import com.mwsfot.common.config.RuoYiConfig;
-import com.mwsfot.common.core.controller.BaseController;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.core.domain.entity.SysUser;
-import com.mwsfot.common.core.domain.model.LoginUser;
-import com.mwsfot.common.enums.BusinessType;
-import com.mwsfot.common.utils.SecurityUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.file.FileUploadUtils;
-import com.mwsfot.common.utils.file.MimeTypeUtils;
-import com.mwsfot.framework.web.service.TokenService;
-import com.mwsfot.system.service.ISysUserService;
 
 /**
  * 个人信息 业务处理
@@ -42,13 +42,12 @@ public class SysProfileController extends BaseController
      * 个人信息
      */
     @GetMapping
-    public AjaxResult profile()
-    {
+    public AjaxResult profile() {
         LoginUser loginUser = getLoginUser();
         SysUser user = loginUser.getUser();
         AjaxResult ajax = AjaxResult.success(user);
-        ajax.put("roleGroup", userService.selectUserRoleGroup(loginUser.getUsername()));
-        ajax.put("postGroup", userService.selectUserPostGroup(loginUser.getUsername()));
+        ajax.put("roleGroup", userService.selectUserRoleGroup(loginUser.getUserId()));
+        ajax.put("postGroup", userService.selectUserPostGroup(loginUser.getUserId()));
         return ajax;
     }
 
@@ -121,7 +120,8 @@ public class SysProfileController extends BaseController
         if (!file.isEmpty())
         {
             LoginUser loginUser = getLoginUser();
-            String avatar = FileUploadUtils.upload(RuoYiConfig.getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
+            String avatar = FileUploadUtils.upload(SystemConfig.getAvatarPath(), file,
+                MimeTypeUtils.IMAGE_EXTENSION);
             if (userService.updateUserAvatar(loginUser.getUsername(), avatar))
             {
                 AjaxResult ajax = AjaxResult.success();

@@ -1,15 +1,15 @@
-package ${packageName}.domain;
+package ${packageName}.entity.domain;
 
 #foreach ($import in $importList)
 import ${import};
 #end
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.mwsfot.common.annotation.Excel;
+import com.mwsfot.system.common.annotation.Excel;
 #if($table.crud || $table.sub)
-import com.mwsfot.common.core.domain.BaseEntity;
+import com.mwsfot.system.common.core.domain.BaseEntity;
 #elseif($table.tree)
-import com.mwsfot.common.core.domain.TreeEntity;
+import com.mwsfot.system.common.core.domain.TreeEntity;
 #end
 
 /**

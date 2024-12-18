@@ -1,5 +1,13 @@
 package com.mwsfot.framework.config;
 
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
+import com.alibaba.druid.spring.boot.autoconfigure.properties.DruidStatProperties;
+import com.alibaba.druid.util.Utils;
+import com.mwsfot.framework.config.properties.DruidProperties;
+import com.mwsfot.framework.datasource.DynamicDataSource;
+import com.mwsfot.system.common.enums.DataSourceType;
+import com.mwsfot.system.common.utils.spring.SpringUtils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,14 +23,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
-import com.alibaba.druid.spring.boot.autoconfigure.properties.DruidStatProperties;
-import com.alibaba.druid.util.Utils;
-import com.mwsfot.common.enums.DataSourceType;
-import com.mwsfot.common.utils.spring.SpringUtils;
-import com.mwsfot.framework.config.properties.DruidProperties;
-import com.mwsfot.framework.datasource.DynamicDataSource;
 
 /**
  * druid 配置多数据源

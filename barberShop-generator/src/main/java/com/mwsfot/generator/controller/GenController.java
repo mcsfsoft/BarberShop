@@ -1,5 +1,21 @@
 package com.mwsfot.generator.controller;
 
+import com.alibaba.druid.DbType;
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
+import com.mwsfot.generator.domain.GenTable;
+import com.mwsfot.generator.domain.GenTableColumn;
+import com.mwsfot.generator.service.IGenTableColumnService;
+import com.mwsfot.generator.service.IGenTableService;
+import com.mwsfot.system.common.annotation.Log;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.core.page.TableDataInfo;
+import com.mwsfot.system.common.core.text.Convert;
+import com.mwsfot.system.common.enums.BusinessType;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.common.utils.sql.SqlUtil;
+import com.mwsfot.system.controller.BaseController;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,22 +34,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.alibaba.druid.DbType;
-import com.alibaba.druid.sql.SQLUtils;
-import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
-import com.mwsfot.common.annotation.Log;
-import com.mwsfot.common.core.controller.BaseController;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.core.page.TableDataInfo;
-import com.mwsfot.common.core.text.Convert;
-import com.mwsfot.common.enums.BusinessType;
-import com.mwsfot.common.utils.SecurityUtils;
-import com.mwsfot.common.utils.sql.SqlUtil;
-import com.mwsfot.generator.domain.GenTable;
-import com.mwsfot.generator.domain.GenTableColumn;
-import com.mwsfot.generator.service.IGenTableColumnService;
-import com.mwsfot.generator.service.IGenTableService;
 
 /**
  * 代码生成 操作处理

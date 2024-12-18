@@ -1,14 +1,16 @@
 package com.mwsfot.system.mapper;
 
+import com.mwsfot.system.domain.entity.SysMenu;
 import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import com.mwsfot.common.core.domain.entity.SysMenu;
 
 /**
  * 菜单表 数据层
  *
  * @author ruoyi
  */
+@Mapper
 public interface SysMenuMapper
 {
     /**
@@ -32,7 +34,7 @@ public interface SysMenuMapper
      * @param menu 菜单信息
      * @return 菜单列表
      */
-    public List<SysMenu> selectMenuListByUserId(SysMenu menu);
+    public List<SysMenu> selectMenuListByUserIdAndTenantId(SysMenu menu);
 
     /**
      * 根据角色ID查询权限

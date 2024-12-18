@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/ruoyi";
 
 // 查询用户列表
 export function listUser(query) {
@@ -11,10 +10,11 @@ export function listUser(query) {
 }
 
 // 查询用户详细
-export function getUser(userId) {
+export function getUser(query) {
   return request({
-    url: '/system/user/' + parseStrEmpty(userId),
-    method: 'get'
+    url: '/system/user/get',
+    method: 'get',
+    params: query
   })
 }
 
@@ -111,9 +111,17 @@ export function uploadAvatar(data) {
 }
 
 // 查询授权角色
-export function getAuthRole(userId) {
+export function getAuthRole(userId, tenantId) {
   return request({
-    url: '/system/user/authRole/' + userId,
+    url: '/system/user/authRole/' + userId + '/' + tenantId,
+    method: 'get'
+  })
+}
+
+// 查询当前租户下可授权角色
+export function getTenantAuthRole(tenantId) {
+  return request({
+    url: '/system/user/tenant/authRole/' + tenantId,
     method: 'get'
   })
 }
@@ -128,9 +136,10 @@ export function updateAuthRole(data) {
 }
 
 // 查询部门下拉树结构
-export function deptTreeSelect() {
+export function deptTreeSelect(query) {
   return request({
     url: '/system/user/deptTree',
-    method: 'get'
+    method: 'get',
+    params: query
   })
 }

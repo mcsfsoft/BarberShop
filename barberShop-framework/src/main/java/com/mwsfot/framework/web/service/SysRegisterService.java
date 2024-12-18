@@ -1,22 +1,27 @@
 package com.mwsfot.framework.web.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.mwsfot.common.constant.CacheConstants;
-import com.mwsfot.common.constant.Constants;
-import com.mwsfot.common.constant.UserConstants;
-import com.mwsfot.common.core.domain.entity.SysUser;
-import com.mwsfot.common.core.domain.model.RegisterBody;
-import com.mwsfot.common.core.redis.RedisCache;
-import com.mwsfot.common.exception.user.CaptchaException;
-import com.mwsfot.common.exception.user.CaptchaExpireException;
-import com.mwsfot.common.utils.MessageUtils;
-import com.mwsfot.common.utils.SecurityUtils;
-import com.mwsfot.common.utils.StringUtils;
+import cn.hutool.core.bean.BeanUtil;
+import com.anji.captcha.model.common.ResponseModel;
+import com.anji.captcha.model.vo.CaptchaVO;
+import com.anji.captcha.service.CaptchaService;
 import com.mwsfot.framework.manager.AsyncManager;
 import com.mwsfot.framework.manager.factory.AsyncFactory;
+import com.mwsfot.system.common.constant.CacheConstants;
+import com.mwsfot.system.common.constant.Constants;
+import com.mwsfot.system.common.constant.UserConstants;
+import com.mwsfot.system.common.core.redis.RedisCache;
+import com.mwsfot.system.common.enums.CaptchaEnum;
+import com.mwsfot.system.common.exception.user.CaptchaException;
+import com.mwsfot.system.common.exception.user.CaptchaExpireException;
+import com.mwsfot.system.common.utils.MessageUtils;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.domain.entity.SysUser;
+import com.mwsfot.system.domain.model.RegisterBody;
 import com.mwsfot.system.service.ISysConfigService;
 import com.mwsfot.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 注册校验方法
@@ -24,8 +29,7 @@ import com.mwsfot.system.service.ISysUserService;
  * @author ruoyi
  */
 @Component
-public class SysRegisterService
-{
+public class SysRegisterService {
     @Autowired
     private ISysUserService userService;
 
@@ -35,31 +39,29 @@ public class SysRegisterService
     @Autowired
     private RedisCache redisCache;
 
+    @Autowired
+    private CaptchaService captchaService;
+
     /**
      * 注册
      */
-    public String register(RegisterBody registerBody)
-    {
-        String msg = "", username = registerBody.getUsername(), password = registerBody.getPassword();
+    public String register(RegisterBody registerBody) {
+        String msg = "", username = registerBody.getUsername(), password =
+            registerBody.getPassword();
         SysUser sysUser = new SysUser();
         sysUser.setUserName(username);
-
-        // 验证码开关
-        boolean captchaEnabled = configService.selectCaptchaEnabled();
-        if (captchaEnabled)
-        {
-            validateCaptcha(username, registerBody.getCode(), registerBody.getUuid());
+        CaptchaVO vo = new CaptchaVO();
+        BeanUtil.copyProperties(registerBody, vo);
+        ResponseModel verification = captchaService.verification(vo);
+        //二次校验异常返回
+        if ( !verification.isSuccess() ) {
+            return CaptchaEnum.getMsg(verification.getRepCode());
         }
-
-        if (StringUtils.isEmpty(username))
-        {
+        if ( StringUtils.isEmpty(username) ) {
             msg = "用户名不能为空";
-        }
-        else if (StringUtils.isEmpty(password))
-        {
+        } else if ( StringUtils.isEmpty(password) ) {
             msg = "用户密码不能为空";
-        }
-        else if (username.length() < UserConstants.USERNAME_MIN_LENGTH
+        } else if ( username.length() < UserConstants.USERNAME_MIN_LENGTH
                 || username.length() > UserConstants.USERNAME_MAX_LENGTH)
         {
             msg = "账户长度必须在2到20个字符之间";

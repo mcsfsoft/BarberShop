@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { getAuthRole, updateAuthRole } from "@/api/system/user";
+import {getAuthRole, updateAuthRole} from "@/api/system/user";
 
 export default {
   name: "AuthRole",
@@ -67,10 +67,16 @@ export default {
     };
   },
   created() {
-    const userId = this.$route.params && this.$route.params.userId;
-    if (userId) {
+    const {userId, tenantId} = this.$route.params;
+    //tip: 若依关闭当前页面并返回上一级方法
+    if (tenantId !== this.$store.getters.tenantId && this.$store.getters.tenantId !== '1') {
+      this.$router.back();
+      const obj = {path: '/user-auth/role/' + userId + '/' + tenantId}
+      this.$tab.closeOpenPage(obj);
+    }
+    if (userId && tenantId) {
       this.loading = true;
-      getAuthRole(userId).then((response) => {
+      getAuthRole(userId, tenantId).then((response) => {
         this.form = response.user;
         this.roles = response.roles;
         this.total = this.roles.length;

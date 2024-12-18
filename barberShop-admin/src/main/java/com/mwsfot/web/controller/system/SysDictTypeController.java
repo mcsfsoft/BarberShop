@@ -1,5 +1,13 @@
 package com.mwsfot.web.controller.system;
 
+import com.mwsfot.system.common.annotation.Log;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.core.page.TableDataInfo;
+import com.mwsfot.system.common.enums.BusinessType;
+import com.mwsfot.system.common.utils.poi.ExcelUtil;
+import com.mwsfot.system.controller.BaseController;
+import com.mwsfot.system.domain.entity.SysDictType;
+import com.mwsfot.system.service.ISysDictTypeService;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +21,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.mwsfot.common.annotation.Log;
-import com.mwsfot.common.core.controller.BaseController;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.core.domain.entity.SysDictType;
-import com.mwsfot.common.core.page.TableDataInfo;
-import com.mwsfot.common.enums.BusinessType;
-import com.mwsfot.common.utils.poi.ExcelUtil;
-import com.mwsfot.system.service.ISysDictTypeService;
 
 /**
  * 数据字典信息

@@ -1,13 +1,15 @@
 package com.mwsfot.system.mapper;
 
+import com.mwsfot.system.domain.entity.SysDictType;
 import java.util.List;
-import com.mwsfot.common.core.domain.entity.SysDictType;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 字典表 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysDictTypeMapper
 {
     /**

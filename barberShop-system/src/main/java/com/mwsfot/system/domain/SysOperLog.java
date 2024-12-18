@@ -1,10 +1,10 @@
 package com.mwsfot.system.domain;
 
-import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mwsfot.common.annotation.Excel;
-import com.mwsfot.common.annotation.Excel.ColumnType;
-import com.mwsfot.common.core.domain.BaseEntity;
+import com.mwsfot.system.common.annotation.Excel;
+import com.mwsfot.system.common.annotation.Excel.ColumnType;
+import com.mwsfot.system.common.core.domain.BaseEntity;
+import java.util.Date;
 
 /**
  * 操作日志记录表 oper_log

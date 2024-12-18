@@ -1,5 +1,6 @@
 package com.mwsfot.framework.config.properties;
 
+import com.mwsfot.system.common.annotation.Anonymous;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import com.mwsfot.common.annotation.Anonymous;
 
 /**
  * 设置Anonymous注解允许匿名访问的url

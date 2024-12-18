@@ -1,5 +1,15 @@
 package com.mwsfot.framework.security.handle;
 
+import com.alibaba.fastjson2.JSON;
+import com.mwsfot.framework.manager.AsyncManager;
+import com.mwsfot.framework.manager.factory.AsyncFactory;
+import com.mwsfot.framework.web.service.TokenService;
+import com.mwsfot.system.common.constant.Constants;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.utils.MessageUtils;
+import com.mwsfot.system.common.utils.ServletUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.domain.model.LoginUser;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -8,16 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import com.alibaba.fastjson2.JSON;
-import com.mwsfot.common.constant.Constants;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.core.domain.model.LoginUser;
-import com.mwsfot.common.utils.MessageUtils;
-import com.mwsfot.common.utils.ServletUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.framework.manager.AsyncManager;
-import com.mwsfot.framework.manager.factory.AsyncFactory;
-import com.mwsfot.framework.web.service.TokenService;
 
 /**
  * 自定义退出处理类 返回成功

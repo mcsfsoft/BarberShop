@@ -1,13 +1,15 @@
 package com.mwsfot.system.mapper;
 
-import java.util.List;
 import com.mwsfot.system.domain.SysNotice;
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 通知公告表 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysNoticeMapper
 {
     /**

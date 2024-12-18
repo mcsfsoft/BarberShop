@@ -1,5 +1,9 @@
 package com.mwsfot.framework.config;
 
+import com.mwsfot.framework.config.properties.PermitAllUrlProperties;
+import com.mwsfot.framework.security.filter.JwtAuthenticationTokenFilter;
+import com.mwsfot.framework.security.handle.AuthenticationEntryPointImpl;
+import com.mwsfot.framework.security.handle.LogoutSuccessHandlerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +13,8 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,10 +22,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.filter.CorsFilter;
-import com.mwsfot.framework.config.properties.PermitAllUrlProperties;
-import com.mwsfot.framework.security.filter.JwtAuthenticationTokenFilter;
-import com.mwsfot.framework.security.handle.AuthenticationEntryPointImpl;
-import com.mwsfot.framework.security.handle.LogoutSuccessHandlerImpl;
 
 /**
  * spring security配置
@@ -98,10 +100,12 @@ public class SecurityConfig
     {
         return httpSecurity
             // CSRF禁用，因为不使用session
-            .csrf(csrf -> csrf.disable())
+            .csrf(AbstractHttpConfigurer::disable)
             // 禁用HTTP响应标头
             .headers((headersCustomizer) -> {
-                headersCustomizer.cacheControl(cache -> cache.disable()).frameOptions(options -> options.sameOrigin());
+                headersCustomizer.cacheControl(
+                    HeadersConfigurer.CacheControlConfig::disable).frameOptions(
+                    HeadersConfigurer.FrameOptionsConfig::sameOrigin);
             })
             // 认证失败处理类
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
@@ -111,10 +115,14 @@ public class SecurityConfig
             .authorizeHttpRequests((requests) -> {
                 permitAllUrl.getUrls().forEach(url -> requests.antMatchers(url).permitAll());
                 // 对于登录login 注册register 验证码captchaImage 允许匿名访问
-                requests.antMatchers("/login", "/register", "/captchaImage").permitAll()
+                requests.antMatchers("/login", "/register", "/captcha/**").permitAll()
                     // 静态资源，可匿名访问
-                    .antMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/profile/**").permitAll()
-                    .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/*/api-docs", "/druid/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css",
+                        "/**/*.js", "/profile/**").permitAll()
+                    .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/webjars/**",
+                        "/*/api-docs", "/druid/**").permitAll()
+                    //放行登录页面租户查询请求
+                    .antMatchers("/system/tenant/platform/login/list/**").permitAll()
                     // 除上面外的所有请求全部需要鉴权认证
                     .anyRequest().authenticated();
             })

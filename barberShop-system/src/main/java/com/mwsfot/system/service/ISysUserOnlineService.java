@@ -1,7 +1,7 @@
 package com.mwsfot.system.service;
 
-import com.mwsfot.common.core.domain.model.LoginUser;
 import com.mwsfot.system.domain.SysUserOnline;
+import com.mwsfot.system.domain.model.LoginUser;
 
 /**
  * 在线用户 服务层

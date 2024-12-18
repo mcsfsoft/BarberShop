@@ -1,8 +1,8 @@
 package com.mwsfot.framework.config;
 
+import com.mwsfot.system.common.utils.ServletUtils;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
-import com.mwsfot.common.utils.ServletUtils;
 
 /**
  * 服务相关配置

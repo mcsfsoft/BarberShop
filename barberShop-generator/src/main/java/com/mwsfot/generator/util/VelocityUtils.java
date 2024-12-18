@@ -1,17 +1,17 @@
 package com.mwsfot.generator.util;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.mwsfot.generator.domain.GenTable;
+import com.mwsfot.generator.domain.GenTableColumn;
+import com.mwsfot.system.common.constant.GenConstants;
+import com.mwsfot.system.common.utils.DateUtils;
+import com.mwsfot.system.common.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.velocity.VelocityContext;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-import com.mwsfot.common.constant.GenConstants;
-import com.mwsfot.common.utils.DateUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.generator.domain.GenTable;
-import com.mwsfot.generator.domain.GenTableColumn;
 
 /**
  * 模板处理工具类

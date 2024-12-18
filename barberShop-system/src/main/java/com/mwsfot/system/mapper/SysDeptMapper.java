@@ -1,14 +1,16 @@
 package com.mwsfot.system.mapper;
 
+import com.mwsfot.system.domain.entity.SysDept;
 import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import com.mwsfot.common.core.domain.entity.SysDept;
 
 /**
  * 部门管理 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysDeptMapper
 {
     /**
@@ -110,9 +112,17 @@ public interface SysDeptMapper
 
     /**
      * 删除部门管理信息
-     * 
+     *
      * @param deptId 部门ID
      * @return 结果
      */
     public int deleteDeptById(Long deptId);
+
+    /**
+     * 物理删除部门管理信息
+     *
+     * @param deptIds 部门ID
+     * @return 结果
+     */
+    int deleteDeptByIds(Long[] deptIds);
 }

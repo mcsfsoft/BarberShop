@@ -1,18 +1,20 @@
 package com.mwsfot.system.mapper;
 
-import java.util.List;
 import com.mwsfot.system.domain.SysRoleDept;
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 角色与部门关联表 数据层
- * 
+ *
  * @author ruoyi
  */
-public interface SysRoleDeptMapper
-{
+
+@Mapper
+public interface SysRoleDeptMapper {
     /**
      * 通过角色ID删除角色和部门关联
-     * 
+     *
      * @param roleId 角色ID
      * @return 结果
      */

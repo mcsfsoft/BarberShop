@@ -1,6 +1,6 @@
 package com.mwsfot.system.domain;
 
-import com.mwsfot.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.StringUtils;
 
 /**
  * 缓存信息

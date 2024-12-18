@@ -57,12 +57,16 @@
 </template>
 
 <script>
-import { unallocatedUserList, authUserSelectAll } from "@/api/system/role";
+import {authUserSelectAll, unallocatedUserList} from "@/api/system/role";
+
 export default {
   dicts: ['sys_normal_disable'],
   props: {
     // 角色编号
     roleId: {
+      type: [Number, String]
+    },
+    tenantId: {
       type: [Number, String]
     }
   },
@@ -82,7 +86,8 @@ export default {
         pageSize: 10,
         roleId: undefined,
         userName: undefined,
-        phonenumber: undefined
+        phonenumber: undefined,
+        tenantId: undefined
       }
     };
   },
@@ -90,6 +95,7 @@ export default {
     // 显示弹框
     show() {
       this.queryParams.roleId = this.roleId;
+      this.queryParams.tenantId = this.tenantId;
       this.getList();
       this.visible = true;
     },

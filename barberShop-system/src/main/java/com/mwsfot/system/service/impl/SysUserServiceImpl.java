@@ -1,27 +1,20 @@
 package com.mwsfot.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.validation.Validator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import com.mwsfot.common.annotation.DataScope;
-import com.mwsfot.common.constant.UserConstants;
-import com.mwsfot.common.core.domain.entity.SysRole;
-import com.mwsfot.common.core.domain.entity.SysUser;
-import com.mwsfot.common.exception.ServiceException;
-import com.mwsfot.common.utils.SecurityUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.bean.BeanValidators;
-import com.mwsfot.common.utils.spring.SpringUtils;
+import cn.hutool.core.util.IdUtil;
+import com.mwsfot.system.common.annotation.DataScope;
+import com.mwsfot.system.common.constant.TenantConstants;
+import com.mwsfot.system.common.constant.UserConstants;
+import com.mwsfot.system.common.enums.RoleIdentificationEnum;
+import com.mwsfot.system.common.exception.ServiceException;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.bean.BeanValidators;
+import com.mwsfot.system.common.utils.spring.SpringUtils;
 import com.mwsfot.system.domain.SysPost;
 import com.mwsfot.system.domain.SysUserPost;
 import com.mwsfot.system.domain.SysUserRole;
+import com.mwsfot.system.domain.entity.SysRole;
+import com.mwsfot.system.domain.entity.SysUser;
 import com.mwsfot.system.mapper.SysPostMapper;
 import com.mwsfot.system.mapper.SysRoleMapper;
 import com.mwsfot.system.mapper.SysUserMapper;
@@ -30,6 +23,18 @@ import com.mwsfot.system.mapper.SysUserRoleMapper;
 import com.mwsfot.system.service.ISysConfigService;
 import com.mwsfot.system.service.ISysDeptService;
 import com.mwsfot.system.service.ISysUserService;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.validation.Validator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 用户 业务层处理
@@ -106,14 +111,13 @@ public class SysUserServiceImpl implements ISysUserService
 
     /**
      * 通过用户名查询用户
-     * 
+     *
      * @param userName 用户名
      * @return 用户对象信息
      */
     @Override
-    public SysUser selectUserByUserName(String userName)
-    {
-        return userMapper.selectUserByUserName(userName);
+    public SysUser selectUserByUserNameAndTenantId(String userName, Long tenantId) {
+        return userMapper.selectUserByUserNameAndTenantId(userName, tenantId);
     }
 
     /**
@@ -130,16 +134,13 @@ public class SysUserServiceImpl implements ISysUserService
 
     /**
      * 查询用户所属角色组
-     * 
-     * @param userName 用户名
+     * @param userId 用户ID
      * @return 结果
      */
     @Override
-    public String selectUserRoleGroup(String userName)
-    {
-        List<SysRole> list = roleMapper.selectRolesByUserName(userName);
-        if (CollectionUtils.isEmpty(list))
-        {
+    public String selectUserRoleGroup(Long userId) {
+        List<SysRole> list = roleMapper.selectRolesByUserId(userId);
+        if ( CollectionUtils.isEmpty(list) ) {
             return StringUtils.EMPTY;
         }
         return list.stream().map(SysRole::getRoleName).collect(Collectors.joining(","));
@@ -147,16 +148,13 @@ public class SysUserServiceImpl implements ISysUserService
 
     /**
      * 查询用户所属岗位组
-     * 
-     * @param userName 用户名
+     * @param userId 用户ID
      * @return 结果
      */
     @Override
-    public String selectUserPostGroup(String userName)
-    {
-        List<SysPost> list = postMapper.selectPostsByUserName(userName);
-        if (CollectionUtils.isEmpty(list))
-        {
+    public String selectUserPostGroup(Long userId) {
+        List<SysPost> list = postMapper.selectPostsByUserId(userId);
+        if ( CollectionUtils.isEmpty(list) ) {
             return StringUtils.EMPTY;
         }
         return list.stream().map(SysPost::getPostName).collect(Collectors.joining(","));
@@ -207,10 +205,9 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public boolean checkEmailUnique(SysUser user)
     {
-        Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
+        long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
         SysUser info = userMapper.checkEmailUnique(user.getEmail());
-        if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue())
-        {
+        if ( StringUtils.isNotNull(info) && info.getUserId() != userId ) {
             return UserConstants.NOT_UNIQUE;
         }
         return UserConstants.UNIQUE;
@@ -224,22 +221,60 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public void checkUserAllowed(SysUser user)
     {
-        if (StringUtils.isNotNull(user.getUserId()) && user.isAdmin())
-        {
-            throw new ServiceException("不允许操作超级管理员用户");
+        if ( StringUtils.isNotNull(user.getUserId()) ) {
+            SysUser sysUser = userMapper.selectUserById(user.getUserId());
+            if ( UserConstants.UN_FIX == sysUser.getIsFix() ) {
+                throw new ServiceException("不允许操作管理员账户");
+            }
+            Optional<SysRole> max =
+                sysUser.getRoles().stream().filter(role -> role.getRoleId() != null)
+                    .max(Comparator.comparing(SysRole::getIdentity));
+            int maxCurrent = SecurityUtils.maxRoleLevel();
+            if ( max.isPresent() && max.get().getIdentity() > maxCurrent ) {
+                throw new ServiceException("不允许越级操作用户");
+            }
+            if ( max.isPresent() &&
+                max.get().getIdentity().equals(RoleIdentificationEnum.SYS_ADMIN_ROLE.getLevel()) ) {
+                throw new ServiceException("不允许操作管理员账户");
+            }
         }
     }
 
     /**
+     * 校验当前租户用户是否允许操作
+     *
+     * @param user 用户信息
+     */
+    @Override
+    public void checkUserTenantAllowed(SysUser user) {
+        if ( user.getTenantId() == null ) {
+            //如果租户ID和默认系统ID相同则允许操作
+            if ( !TenantConstants.DEFAULT_SYSTEM_TENANT_ID.equals(SecurityUtils.getTenantId()) ) {
+                SysUser query = selectUserById(user.getUserId());
+                if ( !SecurityUtils.getTenantId().equals(query.getTenantId()) ) {
+                    throw new ServiceException("不允许操作非自身租户平台用户");
+                }
+            }
+
+        } else {
+            //如果租户ID和默认系统ID相同则允许操作
+            if ( !TenantConstants.DEFAULT_SYSTEM_TENANT_ID.equals(user.getTenantId()) ) {
+                if ( !SecurityUtils.getTenantId().equals(user.getTenantId()) ) {
+                    throw new ServiceException("不允许操作非自身租户平台用户");
+                }
+            }
+        }
+
+    }
+
+    /**
      * 校验用户是否有数据权限
-     * 
+     *
      * @param userId 用户id
      */
     @Override
-    public void checkUserDataScope(Long userId)
-    {
-        if (!SysUser.isAdmin(SecurityUtils.getUserId()))
-        {
+    public void checkUserDataScope(Long userId) {
+        if ( !SysUser.isAdmin(SecurityUtils.getUserId()) ) {
             SysUser user = new SysUser();
             user.setUserId(userId);
             List<SysUser> users = SpringUtils.getAopProxy(this).selectUserList(user);
@@ -462,10 +497,11 @@ public class SysUserServiceImpl implements ISysUserService
     @Transactional
     public int deleteUserByIds(Long[] userIds)
     {
-        for (Long userId : userIds)
-        {
-            checkUserAllowed(new SysUser(userId));
+        for (Long userId : userIds) {
+            SysUser sysUser = new SysUser(userId);
+            checkUserAllowed(sysUser);
             checkUserDataScope(userId);
+            checkUserTenantAllowed(sysUser);
         }
         // 删除用户与角色关联
         userRoleMapper.deleteUserRole(userIds);
@@ -476,17 +512,16 @@ public class SysUserServiceImpl implements ISysUserService
 
     /**
      * 导入用户数据
-     * 
-     * @param userList 用户数据列表
+     *
+     * @param userList        用户数据列表
      * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
-     * @param operName 操作用户
+     * @param operName        操作用户
      * @return 结果
      */
     @Override
-    public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName)
-    {
-        if (StringUtils.isNull(userList) || userList.size() == 0)
-        {
+    public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName,
+                             Long tenantId) {
+        if ( StringUtils.isNull(userList) || userList.size() == 0 ) {
             throw new ServiceException("导入用户数据不能为空！");
         }
         int successNum = 0;
@@ -498,34 +533,36 @@ public class SysUserServiceImpl implements ISysUserService
             try
             {
                 // 验证是否存在这个用户
-                SysUser u = userMapper.selectUserByUserName(user.getUserName());
-                if (StringUtils.isNull(u))
-                {
+                SysUser u = userMapper.selectUserByUserNameAndTenantId(user.getUserName(), tenantId);
+                if (StringUtils.isNull(u) ) {
                     BeanValidators.validateWithException(validator, user);
-                    deptService.checkDeptDataScope(user.getDeptId());
+                    deptService.checkDeptDataScope(user.getDeptId(), tenantId);
                     String password = configService.selectConfigByKey("sys.user.initPassword");
                     user.setPassword(SecurityUtils.encryptPassword(password));
                     user.setCreateBy(operName);
+                    user.setUserId(IdUtil.getSnowflakeNextId());
+                    user.setTenantId(tenantId);
                     userMapper.insertUser(user);
                     successNum++;
-                    successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 导入成功");
+                    successMsg.append(
+                        "<br/>" + successNum + "、账号 " + user.getUserName() + " 导入成功");
                 }
                 else if (isUpdateSupport)
                 {
                     BeanValidators.validateWithException(validator, user);
                     checkUserAllowed(u);
                     checkUserDataScope(u.getUserId());
-                    deptService.checkDeptDataScope(user.getDeptId());
+                    deptService.checkDeptDataScope(user.getDeptId(), tenantId);
                     user.setUserId(u.getUserId());
                     user.setUpdateBy(operName);
                     userMapper.updateUser(user);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、账号 " + user.getUserName() + " 更新成功");
                 }
-                else
-                {
+                else {
                     failureNum++;
-                    failureMsg.append("<br/>" + failureNum + "、账号 " + user.getUserName() + " 已存在");
+                    failureMsg.append("<br/>").append(failureNum).append("、账号 ")
+                        .append(user.getUserName()).append(" 已存在");
                 }
             }
             catch (Exception e)

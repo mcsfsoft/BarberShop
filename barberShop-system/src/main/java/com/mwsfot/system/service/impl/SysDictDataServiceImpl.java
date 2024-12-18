@@ -1,12 +1,12 @@
 package com.mwsfot.system.service.impl;
 
+import com.mwsfot.system.common.utils.DictUtils;
+import com.mwsfot.system.domain.entity.SysDictData;
+import com.mwsfot.system.mapper.SysDictDataMapper;
+import com.mwsfot.system.service.ISysDictDataService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.mwsfot.common.core.domain.entity.SysDictData;
-import com.mwsfot.common.utils.DictUtils;
-import com.mwsfot.system.mapper.SysDictDataMapper;
-import com.mwsfot.system.service.ISysDictDataService;
 
 /**
  * 字典 业务层处理

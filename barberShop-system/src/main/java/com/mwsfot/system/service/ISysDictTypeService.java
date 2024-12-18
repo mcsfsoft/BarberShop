@@ -1,8 +1,8 @@
 package com.mwsfot.system.service;
 
+import com.mwsfot.system.domain.entity.SysDictData;
+import com.mwsfot.system.domain.entity.SysDictType;
 import java.util.List;
-import com.mwsfot.common.core.domain.entity.SysDictData;
-import com.mwsfot.common.core.domain.entity.SysDictType;
 
 /**
  * 字典 业务层

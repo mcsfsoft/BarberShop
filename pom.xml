@@ -36,12 +36,24 @@
         <spring-security.version>5.7.12</spring-security.version>
         <spring-framework.version>5.3.39</spring-framework.version>
         <hutool.version>5.7.22</hutool.version>
+        <lombok.version>1.18.24</lombok.version>
+        <pinyin.version>1.1.8</pinyin.version>
     </properties>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
-
+            <dependency>
+                <groupId>com.github.stuxuhai</groupId>
+                <artifactId>jpinyin</artifactId>
+                <version>${pinyin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
@@ -235,7 +247,7 @@
             <!-- 通用工具-->
             <dependency>
                 <groupId>com.mwsfot</groupId>
-                <artifactId>barberShop-common</artifactId>
+                <artifactId>barberShop-system</artifactId>
                 <version>${barberShop.version}</version>
             </dependency>
 
@@ -248,7 +260,6 @@
         <module>barberShop-system</module>
         <module>barberShop-quartz</module>
         <module>barberShop-generator</module>
-        <module>barberShop-common</module>
     </modules>
     <packaging>pom</packaging>
     <profiles>
@@ -281,6 +292,13 @@
         </profile>
     </profiles>
     <build>
+        <!--防止@actives不生效-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

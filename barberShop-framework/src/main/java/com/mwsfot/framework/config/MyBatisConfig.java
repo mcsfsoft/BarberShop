@@ -1,5 +1,6 @@
 package com.mwsfot.framework.config;
 
+import com.mwsfot.system.common.utils.StringUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,6 @@ import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
-import com.mwsfot.common.utils.StringUtils;
 
 /**
  * Mybatis支持*匹配扫描包

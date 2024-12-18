@@ -1,5 +1,13 @@
 package com.mwsfot.web.controller.system;
 
+import com.mwsfot.system.common.annotation.Log;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.core.page.TableDataInfo;
+import com.mwsfot.system.common.enums.BusinessType;
+import com.mwsfot.system.common.utils.poi.ExcelUtil;
+import com.mwsfot.system.controller.BaseController;
+import com.mwsfot.system.domain.SysPost;
+import com.mwsfot.system.service.ISysPostService;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +21,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.mwsfot.common.annotation.Log;
-import com.mwsfot.common.core.controller.BaseController;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.core.page.TableDataInfo;
-import com.mwsfot.common.enums.BusinessType;
-import com.mwsfot.common.utils.poi.ExcelUtil;
-import com.mwsfot.system.domain.SysPost;
-import com.mwsfot.system.service.ISysPostService;
 
 /**
  * 岗位信息操作处理
@@ -41,6 +41,7 @@ public class SysPostController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SysPost post)
     {
+        checkIsAllowTenantId(post.getTenantId());
         startPage();
         List<SysPost> list = postService.selectPostList(post);
         return getDataTable(list);
@@ -51,8 +52,9 @@ public class SysPostController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysPost post)
     {
+        checkIsAllowTenantId(post.getTenantId());
         List<SysPost> list = postService.selectPostList(post);
-        ExcelUtil<SysPost> util = new ExcelUtil<SysPost>(SysPost.class);
+        ExcelUtil<SysPost> util = new ExcelUtil<>(SysPost.class);
         util.exportExcel(response, list, "岗位数据");
     }
 
@@ -74,6 +76,7 @@ public class SysPostController extends BaseController
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysPost post)
     {
+        checkIsAllowTenantId(post.getTenantId());
         if (!postService.checkPostNameUnique(post))
         {
             return error("新增岗位'" + post.getPostName() + "'失败，岗位名称已存在");
@@ -94,6 +97,7 @@ public class SysPostController extends BaseController
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody SysPost post)
     {
+        checkIsAllowTenantId(post.getTenantId());
         if (!postService.checkPostNameUnique(post))
         {
             return error("修改岗位'" + post.getPostName() + "'失败，岗位名称已存在");

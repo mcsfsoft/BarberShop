@@ -1,8 +1,8 @@
 package com.mwsfot.system.service;
 
+import com.mwsfot.system.common.core.domain.TreeSelect;
+import com.mwsfot.system.domain.entity.SysDept;
 import java.util.List;
-import com.mwsfot.common.core.domain.TreeSelect;
-import com.mwsfot.common.core.domain.entity.SysDept;
 
 /**
  * 部门管理 服务层
@@ -77,15 +77,17 @@ public interface ISysDeptService
 
     /**
      * 查询部门是否存在用户
-     * 
+     *
      * @param deptId 部门ID
      * @return 结果 true 存在 false 不存在
      */
     public boolean checkDeptExistUser(Long deptId);
 
+    public void checkDeptTenantAllowed(SysDept dept);
+
     /**
      * 校验部门名称是否唯一
-     * 
+     *
      * @param dept 部门信息
      * @return 结果
      */
@@ -93,10 +95,10 @@ public interface ISysDeptService
 
     /**
      * 校验部门是否有数据权限
-     * 
+     *
      * @param deptId 部门id
      */
-    public void checkDeptDataScope(Long deptId);
+    public void checkDeptDataScope(Long deptId, Long tenantId);
 
     /**
      * 新增保存部门信息

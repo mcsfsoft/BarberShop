@@ -1,5 +1,18 @@
 package com.mwsfot.framework.web.service;
 
+import com.mwsfot.system.common.constant.CacheConstants;
+import com.mwsfot.system.common.constant.Constants;
+import com.mwsfot.system.common.core.redis.RedisCache;
+import com.mwsfot.system.common.utils.ServletUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.ip.AddressUtils;
+import com.mwsfot.system.common.utils.ip.IpUtils;
+import com.mwsfot.system.common.utils.uuid.IdUtils;
+import com.mwsfot.system.domain.model.LoginUser;
+import eu.bitwalker.useragentutils.UserAgent;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -9,19 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import com.mwsfot.common.constant.CacheConstants;
-import com.mwsfot.common.constant.Constants;
-import com.mwsfot.common.core.domain.model.LoginUser;
-import com.mwsfot.common.core.redis.RedisCache;
-import com.mwsfot.common.utils.ServletUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.ip.AddressUtils;
-import com.mwsfot.common.utils.ip.IpUtils;
-import com.mwsfot.common.utils.uuid.IdUtils;
-import eu.bitwalker.useragentutils.UserAgent;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  * token验证处理

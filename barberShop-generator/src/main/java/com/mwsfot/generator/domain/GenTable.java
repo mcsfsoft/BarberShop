@@ -1,12 +1,12 @@
 package com.mwsfot.generator.domain;
 
+import com.mwsfot.system.common.constant.GenConstants;
+import com.mwsfot.system.common.core.domain.BaseEntity;
+import com.mwsfot.system.common.utils.StringUtils;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import org.apache.commons.lang3.ArrayUtils;
-import com.mwsfot.common.constant.GenConstants;
-import com.mwsfot.common.core.domain.BaseEntity;
-import com.mwsfot.common.utils.StringUtils;
 
 /**
  * 业务表 gen_table

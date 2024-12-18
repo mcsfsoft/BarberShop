@@ -1,5 +1,23 @@
 package com.mwsfot.system.service.impl;
 
+import com.mwsfot.system.common.annotation.DataScope;
+import com.mwsfot.system.common.constant.TenantConstants;
+import com.mwsfot.system.common.constant.UserConstants;
+import com.mwsfot.system.common.exception.ServiceException;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.spring.SpringUtils;
+import com.mwsfot.system.domain.SysRoleDept;
+import com.mwsfot.system.domain.SysRoleMenu;
+import com.mwsfot.system.domain.SysUserRole;
+import com.mwsfot.system.domain.entity.SysRole;
+import com.mwsfot.system.domain.entity.SysUser;
+import com.mwsfot.system.mapper.SysRoleDeptMapper;
+import com.mwsfot.system.mapper.SysRoleMapper;
+import com.mwsfot.system.mapper.SysRoleMenuMapper;
+import com.mwsfot.system.mapper.SysUserRoleMapper;
+import com.mwsfot.system.service.ISysRoleService;
+import com.mwsfot.system.service.ISysUserService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -8,26 +26,10 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.mwsfot.common.annotation.DataScope;
-import com.mwsfot.common.constant.UserConstants;
-import com.mwsfot.common.core.domain.entity.SysRole;
-import com.mwsfot.common.core.domain.entity.SysUser;
-import com.mwsfot.common.exception.ServiceException;
-import com.mwsfot.common.utils.SecurityUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.spring.SpringUtils;
-import com.mwsfot.system.domain.SysRoleDept;
-import com.mwsfot.system.domain.SysRoleMenu;
-import com.mwsfot.system.domain.SysUserRole;
-import com.mwsfot.system.mapper.SysRoleDeptMapper;
-import com.mwsfot.system.mapper.SysRoleMapper;
-import com.mwsfot.system.mapper.SysRoleMenuMapper;
-import com.mwsfot.system.mapper.SysUserRoleMapper;
-import com.mwsfot.system.service.ISysRoleService;
 
 /**
  * 角色 业务层处理
- * 
+ *
  * @author ruoyi
  */
 @Service
@@ -44,37 +46,43 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     @Autowired
     private SysRoleDeptMapper roleDeptMapper;
+    /**
+     * 注意循环引用
+     */
+    @Autowired
+    private ISysUserService sysUserService;
 
     /**
      * 根据条件分页查询角色数据
-     * 
+     *
      * @param role 角色信息
      * @return 角色数据集合信息
      */
     @Override
     @DataScope(deptAlias = "d")
-    public List<SysRole> selectRoleList(SysRole role)
-    {
+    public List<SysRole> selectRoleList(SysRole role) {
+        Long tenantId = SecurityUtils.getTenantId();
+        //非平台端用户, 只能查询自己拥有的角色
+        if ( !TenantConstants.DEFAULT_SYSTEM_TENANT_ID.equals(role.getTenantId()) &&
+            !TenantConstants.DEFAULT_SYSTEM_TENANT_ID.equals(SecurityUtils.getTenantId()) ) {
+            role.setTenantId(tenantId);
+        }
         return roleMapper.selectRoleList(role);
     }
 
     /**
      * 根据用户ID查询角色
-     * 
+     *
      * @param userId 用户ID
      * @return 角色列表
      */
     @Override
-    public List<SysRole> selectRolesByUserId(Long userId)
-    {
+    public List<SysRole> selectRolesByUserIdAndTenantId(Long userId, Long tenantId) {
         List<SysRole> userRoles = roleMapper.selectRolePermissionByUserId(userId);
-        List<SysRole> roles = selectRoleAll();
-        for (SysRole role : roles)
-        {
-            for (SysRole userRole : userRoles)
-            {
-                if (role.getRoleId().longValue() == userRole.getRoleId().longValue())
-                {
+        List<SysRole> roles = selectRoleAll(tenantId);
+        for (SysRole role : roles) {
+            for (SysRole userRole : userRoles) {
+                if ( role.getRoleId().longValue() == userRole.getRoleId().longValue() ) {
                     role.setFlag(true);
                     break;
                 }
@@ -83,15 +91,19 @@ public class SysRoleServiceImpl implements ISysRoleService
         return roles;
     }
 
+    @Override
+    public int selectTenantRoleNumsByTenantId(Long tenantId) {
+        return roleMapper.selectTenantRoleNumsByTenantId(tenantId);
+    }
+
     /**
      * 根据用户ID查询权限
-     * 
+     *
      * @param userId 用户ID
      * @return 权限列表
      */
     @Override
-    public Set<String> selectRolePermissionByUserId(Long userId)
-    {
+    public Set<String> selectRolePermissionByUserId(Long userId) {
         List<SysRole> perms = roleMapper.selectRolePermissionByUserId(userId);
         Set<String> permsSet = new HashSet<>();
         for (SysRole perm : perms)
@@ -106,18 +118,19 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 查询所有角色
-     * 
+     *
      * @return 角色列表
      */
     @Override
-    public List<SysRole> selectRoleAll()
-    {
-        return SpringUtils.getAopProxy(this).selectRoleList(new SysRole());
+    public List<SysRole> selectRoleAll(Long tenantId) {
+        SysRole sysRole = new SysRole();
+        sysRole.setTenantId(tenantId);
+        return SpringUtils.getAopProxy(this).selectRoleList(sysRole);
     }
 
     /**
      * 根据用户ID获取角色选择框列表
-     * 
+     *
      * @param userId 用户ID
      * @return 选中角色ID列表
      */
@@ -129,7 +142,7 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 通过角色ID查询角色
-     * 
+     *
      * @param roleId 角色ID
      * @return 角色对象信息
      */
@@ -141,17 +154,16 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 校验角色名称是否唯一
-     * 
+     *
      * @param role 角色信息
      * @return 结果
      */
     @Override
     public boolean checkRoleNameUnique(SysRole role)
     {
-        Long roleId = StringUtils.isNull(role.getRoleId()) ? -1L : role.getRoleId();
+        long roleId = StringUtils.isNull(role.getRoleId()) ? -1L : role.getRoleId();
         SysRole info = roleMapper.checkRoleNameUnique(role.getRoleName());
-        if (StringUtils.isNotNull(info) && info.getRoleId().longValue() != roleId.longValue())
-        {
+        if ( StringUtils.isNotNull(info) && info.getRoleId() != roleId ) {
             return UserConstants.NOT_UNIQUE;
         }
         return UserConstants.UNIQUE;
@@ -159,7 +171,7 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 校验角色权限是否唯一
-     * 
+     *
      * @param role 角色信息
      * @return 结果
      */
@@ -177,21 +189,25 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 校验角色是否允许操作
-     * 
+     *
      * @param role 角色信息
      */
     @Override
-    public void checkRoleAllowed(SysRole role)
-    {
-        if (StringUtils.isNotNull(role.getRoleId()) && role.isAdmin())
-        {
+    public void checkRoleAllowed(SysRole role) {
+        if ( StringUtils.isNotNull(role.getRoleId()) && role.isAdmin() ) {
             throw new ServiceException("不允许操作超级管理员角色");
+        }
+        if ( StringUtils.isNotNull(role.getRoleId()) ) {
+            SysRole sysRole = roleMapper.selectRoleById(role.getRoleId());
+            if ( sysRole.getIdentity() > SecurityUtils.maxRoleLevel() ) {
+                throw new ServiceException("不允许越级操作");
+            }
         }
     }
 
     /**
      * 校验角色是否有数据权限
-     * 
+     *
      * @param roleIds 角色id
      */
     @Override
@@ -214,7 +230,7 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 通过角色ID查询角色使用数量
-     * 
+     *
      * @param roleId 角色ID
      * @return 结果
      */
@@ -226,7 +242,7 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 新增保存角色信息
-     * 
+     *
      * @param role 角色信息
      * @return 结果
      */
@@ -241,7 +257,7 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 修改保存角色信息
-     * 
+     *
      * @param role 角色信息
      * @return 结果
      */
@@ -249,6 +265,7 @@ public class SysRoleServiceImpl implements ISysRoleService
     @Transactional
     public int updateRole(SysRole role)
     {
+        checkRoleTenantAllowed(role);
         // 修改角色信息
         roleMapper.updateRole(role);
         // 删除角色与菜单关联
@@ -258,7 +275,7 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 修改角色状态
-     * 
+     *
      * @param role 角色信息
      * @return 结果
      */
@@ -270,7 +287,7 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 修改数据权限信息
-     * 
+     *
      * @param role 角色信息
      * @return 结果
      */
@@ -288,7 +305,7 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 新增角色菜单信息
-     * 
+     *
      * @param role 角色对象
      */
     public int insertRoleMenu(SysRole role)
@@ -336,7 +353,7 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 通过角色ID删除角色
-     * 
+     *
      * @param roleId 角色ID
      * @return 结果
      */
@@ -353,7 +370,7 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 批量删除角色信息
-     * 
+     *
      * @param roleIds 需要删除的角色ID
      * @return 结果
      */
@@ -366,6 +383,7 @@ public class SysRoleServiceImpl implements ISysRoleService
             checkRoleAllowed(new SysRole(roleId));
             checkRoleDataScope(roleId);
             SysRole role = selectRoleById(roleId);
+            checkRoleTenantAllowed(role);
             if (countUserRoleByRoleId(roleId) > 0)
             {
                 throw new ServiceException(String.format("%1$s已分配,不能删除", role.getRoleName()));
@@ -380,32 +398,36 @@ public class SysRoleServiceImpl implements ISysRoleService
 
     /**
      * 取消授权用户角色
-     * 
+     *
      * @param userRole 用户和角色关联信息
      * @return 结果
      */
     @Override
-    public int deleteAuthUser(SysUserRole userRole)
-    {
+    public int deleteAuthUser(SysUserRole userRole) {
+        checkRoleTenantAllowed(new SysRole(userRole.getRoleId()));
+        sysUserService.checkUserTenantAllowed(new SysUser(userRole.getUserId()));
         return userRoleMapper.deleteUserRoleInfo(userRole);
     }
 
     /**
      * 批量取消授权用户角色
-     * 
+     *
      * @param roleId 角色ID
      * @param userIds 需要取消授权的用户数据ID
      * @return 结果
      */
     @Override
-    public int deleteAuthUsers(Long roleId, Long[] userIds)
-    {
+    public int deleteAuthUsers(Long roleId, Long[] userIds) {
+        checkRoleTenantAllowed(new SysRole(roleId));
+        for (Long userId : userIds) {
+            sysUserService.checkUserTenantAllowed(new SysUser(userId));
+        }
         return userRoleMapper.deleteUserRoleInfos(roleId, userIds);
     }
 
     /**
      * 批量选择授权用户角色
-     * 
+     *
      * @param roleId 角色ID
      * @param userIds 需要授权的用户数据ID
      * @return 结果
@@ -413,10 +435,11 @@ public class SysRoleServiceImpl implements ISysRoleService
     @Override
     public int insertAuthUsers(Long roleId, Long[] userIds)
     {
+        checkRoleTenantAllowed(new SysRole(roleId));
         // 新增用户与角色管理
         List<SysUserRole> list = new ArrayList<SysUserRole>();
-        for (Long userId : userIds)
-        {
+        for (Long userId : userIds) {
+            sysUserService.checkUserTenantAllowed(new SysUser(userId));
             SysUserRole ur = new SysUserRole();
             ur.setUserId(userId);
             ur.setRoleId(roleId);
@@ -424,4 +447,31 @@ public class SysRoleServiceImpl implements ISysRoleService
         }
         return userRoleMapper.batchUserRole(list);
     }
+
+    /**
+     * 校验当前用户是否能修改租户权限
+     *
+     * @param role 角色
+     */
+    @Override
+    public void checkRoleTenantAllowed(SysRole role) {
+        if ( role.getTenantId() == null ) {
+            //如果租户ID和默认系统ID相同则允许操作
+            if ( !TenantConstants.DEFAULT_SYSTEM_TENANT_ID.equals(SecurityUtils.getTenantId()) ) {
+                SysRole query = selectRoleById(role.getRoleId());
+                if ( !SecurityUtils.getTenantId().equals(query.getTenantId()) ) {
+                    throw new ServiceException("不允许操作非自身租户平台角色");
+                }
+            }
+
+        } else {
+            //如果租户ID和默认系统ID相同则允许操作
+            if ( !TenantConstants.DEFAULT_SYSTEM_TENANT_ID.equals(role.getTenantId()) ) {
+                if ( !SecurityUtils.getTenantId().equals(role.getTenantId()) ) {
+                    throw new ServiceException("不允许操作非自身租户平台角色");
+                }
+            }
+        }
+    }
+
 }

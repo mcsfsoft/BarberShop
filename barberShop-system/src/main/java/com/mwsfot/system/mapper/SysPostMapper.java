@@ -1,13 +1,15 @@
 package com.mwsfot.system.mapper;
 
-import java.util.List;
 import com.mwsfot.system.domain.SysPost;
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 岗位信息 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysPostMapper
 {
     /**
@@ -20,10 +22,10 @@ public interface SysPostMapper
 
     /**
      * 查询所有岗位
-     * 
+     *
      * @return 岗位列表
      */
-    public List<SysPost> selectPostAll();
+    public List<SysPost> selectPostAll(Long tenantId);
 
     /**
      * 通过岗位ID查询岗位信息
@@ -43,11 +45,11 @@ public interface SysPostMapper
 
     /**
      * 查询用户所属岗位组
-     * 
+     *
      * @param userName 用户名
      * @return 结果
      */
-    public List<SysPost> selectPostsByUserName(String userName);
+    public List<SysPost> selectPostsByUserId(Long userName);
 
     /**
      * 删除岗位信息

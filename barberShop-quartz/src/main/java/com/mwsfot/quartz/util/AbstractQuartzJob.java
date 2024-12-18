@@ -1,20 +1,20 @@
 package com.mwsfot.quartz.util;
 
+import com.mwsfot.quartz.domain.SysJob;
+import com.mwsfot.quartz.domain.SysJobLog;
+import com.mwsfot.quartz.service.ISysJobLogService;
+import com.mwsfot.system.common.constant.Constants;
+import com.mwsfot.system.common.constant.ScheduleConstants;
+import com.mwsfot.system.common.utils.ExceptionUtil;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.bean.BeanUtils;
+import com.mwsfot.system.common.utils.spring.SpringUtils;
 import java.util.Date;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.mwsfot.common.constant.Constants;
-import com.mwsfot.common.constant.ScheduleConstants;
-import com.mwsfot.common.utils.ExceptionUtil;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.bean.BeanUtils;
-import com.mwsfot.common.utils.spring.SpringUtils;
-import com.mwsfot.quartz.domain.SysJob;
-import com.mwsfot.quartz.domain.SysJobLog;
-import com.mwsfot.quartz.service.ISysJobLogService;
 
 /**
  * 抽象quartz调用

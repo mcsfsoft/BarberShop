@@ -1,15 +1,16 @@
 package com.mwsfot.system.service.impl;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.mwsfot.common.constant.UserConstants;
-import com.mwsfot.common.exception.ServiceException;
-import com.mwsfot.common.utils.StringUtils;
+import com.mwsfot.system.common.constant.UserConstants;
+import com.mwsfot.system.common.exception.ServiceException;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.common.utils.StringUtils;
 import com.mwsfot.system.domain.SysPost;
 import com.mwsfot.system.mapper.SysPostMapper;
 import com.mwsfot.system.mapper.SysUserPostMapper;
 import com.mwsfot.system.service.ISysPostService;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 岗位信息 服务层处理
@@ -45,7 +46,7 @@ public class SysPostServiceImpl implements ISysPostService
     @Override
     public List<SysPost> selectPostAll()
     {
-        return postMapper.selectPostAll();
+        return postMapper.selectPostAll(SecurityUtils.getTenantId());
     }
 
     /**

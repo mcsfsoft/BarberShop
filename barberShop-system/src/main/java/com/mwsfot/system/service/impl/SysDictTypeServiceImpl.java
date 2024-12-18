@@ -1,5 +1,14 @@
 package com.mwsfot.system.service.impl;
 
+import com.mwsfot.system.common.constant.UserConstants;
+import com.mwsfot.system.common.exception.ServiceException;
+import com.mwsfot.system.common.utils.DictUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.domain.entity.SysDictData;
+import com.mwsfot.system.domain.entity.SysDictType;
+import com.mwsfot.system.mapper.SysDictDataMapper;
+import com.mwsfot.system.mapper.SysDictTypeMapper;
+import com.mwsfot.system.service.ISysDictTypeService;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -8,15 +17,6 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.mwsfot.common.constant.UserConstants;
-import com.mwsfot.common.core.domain.entity.SysDictData;
-import com.mwsfot.common.core.domain.entity.SysDictType;
-import com.mwsfot.common.exception.ServiceException;
-import com.mwsfot.common.utils.DictUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.system.mapper.SysDictDataMapper;
-import com.mwsfot.system.mapper.SysDictTypeMapper;
-import com.mwsfot.system.service.ISysDictTypeService;
 
 /**
  * 字典 业务层处理

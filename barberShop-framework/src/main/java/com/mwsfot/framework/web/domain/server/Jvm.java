@@ -1,8 +1,8 @@
 package com.mwsfot.framework.web.domain.server;
 
+import com.mwsfot.system.common.utils.Arith;
+import com.mwsfot.system.common.utils.DateUtils;
 import java.lang.management.ManagementFactory;
-import com.mwsfot.common.utils.Arith;
-import com.mwsfot.common.utils.DateUtils;
 
 /**
  * JVM相关信息

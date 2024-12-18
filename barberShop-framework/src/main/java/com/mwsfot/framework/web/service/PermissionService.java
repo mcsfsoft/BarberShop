@@ -1,14 +1,14 @@
 package com.mwsfot.framework.web.service;
 
+import com.mwsfot.framework.security.context.PermissionContextHolder;
+import com.mwsfot.system.common.constant.Constants;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.domain.entity.SysRole;
+import com.mwsfot.system.domain.model.LoginUser;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import com.mwsfot.common.constant.Constants;
-import com.mwsfot.common.core.domain.entity.SysRole;
-import com.mwsfot.common.core.domain.model.LoginUser;
-import com.mwsfot.common.utils.SecurityUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.framework.security.context.PermissionContextHolder;
 
 /**
  * RuoYi首创 自定义权限实现，ss取自SpringSecurity首字母

@@ -1,5 +1,12 @@
 package com.mwsfot.quartz.util;
 
+import com.mwsfot.quartz.domain.SysJob;
+import com.mwsfot.system.common.constant.Constants;
+import com.mwsfot.system.common.constant.ScheduleConstants;
+import com.mwsfot.system.common.exception.job.TaskException;
+import com.mwsfot.system.common.exception.job.TaskException.Code;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.spring.SpringUtils;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
@@ -10,13 +17,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
-import com.mwsfot.common.constant.Constants;
-import com.mwsfot.common.constant.ScheduleConstants;
-import com.mwsfot.common.exception.job.TaskException;
-import com.mwsfot.common.exception.job.TaskException.Code;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.spring.SpringUtils;
-import com.mwsfot.quartz.domain.SysJob;
 
 /**
  * 定时任务工具类

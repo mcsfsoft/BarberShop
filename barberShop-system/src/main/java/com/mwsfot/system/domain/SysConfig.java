@@ -1,12 +1,12 @@
 package com.mwsfot.system.domain;
 
+import com.mwsfot.system.common.annotation.Excel;
+import com.mwsfot.system.common.annotation.Excel.ColumnType;
+import com.mwsfot.system.common.core.domain.BaseEntity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.mwsfot.common.annotation.Excel;
-import com.mwsfot.common.annotation.Excel.ColumnType;
-import com.mwsfot.common.core.domain.BaseEntity;
 
 /**
  * 参数配置表 sys_config

@@ -1,8 +1,8 @@
 package com.mwsfot.framework.security.context;
 
+import com.mwsfot.system.common.core.text.Convert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-import com.mwsfot.common.core.text.Convert;
 
 /**
  * 权限信息

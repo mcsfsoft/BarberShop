@@ -1,13 +1,15 @@
 package com.mwsfot.system.mapper;
 
-import java.util.List;
 import com.mwsfot.system.domain.SysRoleMenu;
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 角色与菜单关联表 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysRoleMenuMapper
 {
     /**

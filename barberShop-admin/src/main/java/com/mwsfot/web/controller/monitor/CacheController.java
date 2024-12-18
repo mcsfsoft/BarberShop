@@ -1,5 +1,9 @@
 package com.mwsfot.web.controller.monitor;
 
+import com.mwsfot.system.common.constant.CacheConstants;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.domain.SysCache;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,10 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.mwsfot.common.constant.CacheConstants;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.system.domain.SysCache;
 
 /**
  * 缓存监控

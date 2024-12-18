@@ -25,6 +25,9 @@ export default {
       required: true
     }
   },
+  created() {
+    console.log(this.$store.getters.tenant)
+  },
   computed: {
     variables() {
       return variables;
@@ -35,10 +38,11 @@ export default {
   },
   data() {
     return {
-      title: process.env.VUE_APP_TITLE,
+      title: this.$store.getters.tenant ? this.$store.getters.tenant.tenantName : process.env.VUE_APP_TITLE,
       logo: logoImg
     }
-  }
+  },
+  methods: {}
 }
 </script>
 

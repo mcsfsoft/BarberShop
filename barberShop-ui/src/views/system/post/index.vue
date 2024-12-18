@@ -1,12 +1,24 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="平台">
+        <el-select v-model="queryParams.tenantId" placeholder="请选择用户平台" filterable
+                   remote
+                   :remote-method="queryTenantAsync">
+          <el-option
+              v-for="tenant in tenantList"
+              :key="tenant.tenantId"
+              :label="tenant.tenantName"
+              :value="tenant.tenantId"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="岗位编码" prop="postCode">
         <el-input
-          v-model="queryParams.postCode"
-          placeholder="请输入岗位编码"
-          clearable
-          @keyup.enter.native="handleQuery"
+            v-model="queryParams.postCode"
+            placeholder="请输入岗位编码"
+            clearable
+            @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="岗位名称" prop="postName">
@@ -126,14 +138,17 @@
     <!-- 添加或修改岗位对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="所属平台" prop="tenantName">
+          <span>{{ form.tenantName }}</span>
+        </el-form-item>
         <el-form-item label="岗位名称" prop="postName">
-          <el-input v-model="form.postName" placeholder="请输入岗位名称" />
+          <el-input v-model="form.postName" placeholder="请输入岗位名称"/>
         </el-form-item>
         <el-form-item label="岗位编码" prop="postCode">
-          <el-input v-model="form.postCode" placeholder="请输入编码名称" />
+          <el-input v-model="form.postCode" placeholder="请输入编码名称" disabled/>
         </el-form-item>
         <el-form-item label="岗位顺序" prop="postSort">
-          <el-input-number v-model="form.postSort" controls-position="right" :min="0" />
+          <el-input-number v-model="form.postSort" controls-position="right" :min="0"/>
         </el-form-item>
         <el-form-item label="岗位状态" prop="status">
           <el-radio-group v-model="form.status">
@@ -157,7 +172,9 @@
 </template>
 
 <script>
-import { listPost, getPost, delPost, addPost, updatePost } from "@/api/system/post";
+import {addPost, delPost, getPost, listPost, updatePost} from "@/api/system/post";
+import {getTenantList} from '@/api/system/tenant';
+import pinyin from "js-pinyin";
 
 export default {
   name: "Post",
@@ -176,6 +193,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      //租户列表
+      tenantList: [],
       // 岗位表格数据
       postList: [],
       // 弹出层标题
@@ -188,6 +207,7 @@ export default {
         pageSize: 10,
         postCode: undefined,
         postName: undefined,
+        tenantId: undefined,
         status: undefined
       },
       // 表单参数
@@ -198,18 +218,42 @@ export default {
           { required: true, message: "岗位名称不能为空", trigger: "blur" }
         ],
         postCode: [
-          { required: true, message: "岗位编码不能为空", trigger: "blur" }
+          {required: true, message: "岗位编码不能为空", trigger: "blur"}
         ],
         postSort: [
-          { required: true, message: "岗位顺序不能为空", trigger: "blur" }
+          {required: true, message: "岗位顺序不能为空", trigger: "blur"}
         ]
       }
     };
   },
+  watch: {
+    'form.postName'() {
+      if (this.form.postName) {
+        this.form.postCode = pinyin.getCamelChars(this.tenantList.find(item => item.tenantId === this.queryParams.tenantId).tenantName + '_' + this.form.postName)
+      }
+    },
+    'queryParams.tenantId'(val) {
+      this.getList()
+    }
+  },
   created() {
+    this.queryParams.tenantId = this.$store.getters.tenantId;
+    this.queryTenantAsync();
     this.getList();
   },
   methods: {
+    /**
+     * 远程查询租户列表
+     * @param query 模糊搜索字段
+     */
+    queryTenantAsync(query) {
+      this.tenantLoading = true;
+      getTenantList({'tenantName': query}).then(res => {
+        this.tenantList = res.data;
+      }).catch(e => {
+        console.error(e)
+      })
+    },
     /** 查询岗位列表 */
     getList() {
       this.loading = true;
@@ -227,6 +271,8 @@ export default {
     // 表单重置
     reset() {
       this.form = {
+        tenantId: this.queryParams.tenantId,
+        tenantName: '',
         postId: undefined,
         postCode: undefined,
         postName: undefined,
@@ -249,7 +295,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.postId)
-      this.single = selection.length!=1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -257,6 +303,8 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加岗位";
+      this.form.tenantId = this.queryParams.tenantId;
+      this.form.tenantName = this.tenantList.find(item => item.tenantId === this.queryParams.tenantId).tenantName;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -264,6 +312,8 @@ export default {
       const postId = row.postId || this.ids
       getPost(postId).then(response => {
         this.form = response.data;
+        this.form.tenantId = this.queryParams.tenantId;
+        this.form.tenantName = this.tenantList.find(item => item.tenantId === this.queryParams.tenantId).tenantName;
         this.open = true;
         this.title = "修改岗位";
       });

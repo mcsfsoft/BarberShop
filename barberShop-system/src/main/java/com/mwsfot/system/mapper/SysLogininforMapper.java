@@ -1,13 +1,15 @@
 package com.mwsfot.system.mapper;
 
-import java.util.List;
 import com.mwsfot.system.domain.SysLogininfor;
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 系统访问日志情况信息 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysLogininforMapper
 {
     /**

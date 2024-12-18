@@ -1,10 +1,10 @@
 package com.mwsfot.framework.manager;
 
+import com.mwsfot.system.common.utils.Threads;
+import com.mwsfot.system.common.utils.spring.SpringUtils;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import com.mwsfot.common.utils.Threads;
-import com.mwsfot.common.utils.spring.SpringUtils;
 
 /**
  * 异步任务管理器

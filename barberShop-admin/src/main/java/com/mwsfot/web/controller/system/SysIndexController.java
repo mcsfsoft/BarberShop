@@ -1,10 +1,10 @@
 package com.mwsfot.web.controller.system;
 
+import com.mwsfot.system.common.config.SystemConfig;
+import com.mwsfot.system.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.mwsfot.common.config.RuoYiConfig;
-import com.mwsfot.common.utils.StringUtils;
 
 /**
  * 首页
@@ -14,9 +14,11 @@ import com.mwsfot.common.utils.StringUtils;
 @RestController
 public class SysIndexController
 {
-    /** 系统基础配置 */
+    /**
+     * 系统基础配置
+     */
     @Autowired
-    private RuoYiConfig ruoyiConfig;
+    private SystemConfig ruoyiConfig;
 
     /**
      * 访问首页，提示语

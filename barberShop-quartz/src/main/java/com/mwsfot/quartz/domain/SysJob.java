@@ -1,17 +1,17 @@
 package com.mwsfot.quartz.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.mwsfot.quartz.util.CronUtils;
+import com.mwsfot.system.common.annotation.Excel;
+import com.mwsfot.system.common.annotation.Excel.ColumnType;
+import com.mwsfot.system.common.constant.ScheduleConstants;
+import com.mwsfot.system.common.core.domain.BaseEntity;
+import com.mwsfot.system.common.utils.StringUtils;
 import java.util.Date;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mwsfot.common.annotation.Excel;
-import com.mwsfot.common.annotation.Excel.ColumnType;
-import com.mwsfot.common.constant.ScheduleConstants;
-import com.mwsfot.common.core.domain.BaseEntity;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.quartz.util.CronUtils;
 
 /**
  * 定时任务调度表 sys_job

@@ -1,14 +1,16 @@
 package com.mwsfot.system.mapper;
 
+import com.mwsfot.system.domain.entity.SysUser;
 import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import com.mwsfot.common.core.domain.entity.SysUser;
 
 /**
  * 用户表 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysUserMapper
 {
     /**
@@ -36,12 +38,14 @@ public interface SysUserMapper
     public List<SysUser> selectUnallocatedList(SysUser user);
 
     /**
-     * 通过用户名查询用户
-     * 
+     * 通过用户名及租户ID查询用户
+     *
      * @param userName 用户名
+     * @param tenantId 租户ID
      * @return 用户对象信息
      */
-    public SysUser selectUserByUserName(String userName);
+    public SysUser selectUserByUserNameAndTenantId(@Param("userName") String userName,
+                                                   @Param("tenantId") Long tenantId);
 
     /**
      * 通过用户ID查询用户

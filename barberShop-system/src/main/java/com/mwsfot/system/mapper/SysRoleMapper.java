@@ -1,13 +1,15 @@
 package com.mwsfot.system.mapper;
 
+import com.mwsfot.system.domain.entity.SysRole;
 import java.util.List;
-import com.mwsfot.common.core.domain.entity.SysRole;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 角色表 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysRoleMapper
 {
     /**
@@ -51,11 +53,11 @@ public interface SysRoleMapper
 
     /**
      * 根据用户ID查询角色
-     * 
+     *
      * @param userName 用户名
      * @return 角色列表
      */
-    public List<SysRole> selectRolesByUserName(String userName);
+    public List<SysRole> selectRolesByUserId(Long userId);
 
     /**
      * 校验角色名称是否唯一
@@ -99,9 +101,17 @@ public interface SysRoleMapper
 
     /**
      * 批量删除角色信息
-     * 
+     *
      * @param roleIds 需要删除的角色ID
      * @return 结果
      */
     public int deleteRoleByIds(Long[] roleIds);
+
+    /**
+     * 根据租户ID查询当前租户下可用角色
+     *
+     * @param tenantId 租户ID
+     * @return 查询结果
+     */
+    int selectTenantRoleNumsByTenantId(Long tenantId);
 }

@@ -1,8 +1,8 @@
 package com.mwsfot.generator.domain;
 
+import com.mwsfot.system.common.core.domain.BaseEntity;
+import com.mwsfot.system.common.utils.StringUtils;
 import javax.validation.constraints.NotBlank;
-import com.mwsfot.common.core.domain.BaseEntity;
-import com.mwsfot.common.utils.StringUtils;
 
 /**
  * 代码生成业务字段表 gen_table_column

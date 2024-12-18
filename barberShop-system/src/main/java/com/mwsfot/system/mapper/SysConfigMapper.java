@@ -1,13 +1,15 @@
 package com.mwsfot.system.mapper;
 
-import java.util.List;
 import com.mwsfot.system.domain.SysConfig;
+import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 参数配置 数据层
  * 
  * @author ruoyi
  */
+@Mapper
 public interface SysConfigMapper
 {
     /**

@@ -13,7 +13,7 @@ export default {
   components: { ThemePicker },
   metaInfo() {
     return {
-      title: this.$store.state.settings.dynamicTitle && this.$store.state.settings.title,
+      title: this.$store.getters.tenant ? this.$store.getters.tenant.tenantName : process.env.VUE_APP_TITLE,
       titleTemplate: title => {
         return title ? `${title} - ${process.env.VUE_APP_TITLE}` : process.env.VUE_APP_TITLE
       }

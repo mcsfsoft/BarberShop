@@ -1,5 +1,12 @@
 package com.mwsfot.web.controller.system;
 
+import com.mwsfot.system.common.annotation.Log;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.core.page.TableDataInfo;
+import com.mwsfot.system.common.enums.BusinessType;
+import com.mwsfot.system.controller.BaseController;
+import com.mwsfot.system.domain.SysNotice;
+import com.mwsfot.system.service.ISysNoticeService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,13 +19,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.mwsfot.common.annotation.Log;
-import com.mwsfot.common.core.controller.BaseController;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.core.page.TableDataInfo;
-import com.mwsfot.common.enums.BusinessType;
-import com.mwsfot.system.domain.SysNotice;
-import com.mwsfot.system.service.ISysNoticeService;
 
 /**
  * 公告 信息操作处理

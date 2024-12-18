@@ -1,11 +1,11 @@
 package com.mwsfot.generator.service;
 
+import com.mwsfot.generator.domain.GenTableColumn;
+import com.mwsfot.generator.mapper.GenTableColumnMapper;
+import com.mwsfot.system.common.core.text.Convert;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.mwsfot.common.core.text.Convert;
-import com.mwsfot.generator.domain.GenTableColumn;
-import com.mwsfot.generator.mapper.GenTableColumnMapper;
 
 /**
  * 业务字段 服务层实现

@@ -1,5 +1,8 @@
 package com.mwsfot.framework.config;
 
+import com.mwsfot.system.common.filter.RepeatableFilter;
+import com.mwsfot.system.common.filter.XssFilter;
+import com.mwsfot.system.common.utils.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.DispatcherType;
@@ -8,9 +11,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.mwsfot.common.filter.RepeatableFilter;
-import com.mwsfot.common.filter.XssFilter;
-import com.mwsfot.common.utils.StringUtils;
 
 /**
  * Filter配置

@@ -1,5 +1,8 @@
 package com.mwsfot.framework.aspectj;
 
+import com.mwsfot.framework.datasource.DynamicDataSourceContextHolder;
+import com.mwsfot.system.common.annotation.DataSource;
+import com.mwsfot.system.common.utils.StringUtils;
 import java.util.Objects;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -11,32 +14,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import com.mwsfot.common.annotation.DataSource;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.framework.datasource.DynamicDataSourceContextHolder;
 
 /**
  * 多数据源处理
- * 
+ *
  * @author ruoyi
  */
 @Aspect
 @Order(1)
 @Component
-public class DataSourceAspect
-{
+public class DataSourceAspect {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Pointcut("@annotation(com.mwsfot.common.annotation.DataSource)"
-            + "|| @within(com.mwsfot.common.annotation.DataSource)")
-    public void dsPointCut()
-    {
+    @Pointcut("@annotation(com.mwsfot.system.common.annotation.DataSource)"
+        + "|| @within(com.mwsfot.system.common.annotation.DataSource)")
+    public void dsPointCut() {
 
     }
 
     @Around("dsPointCut()")
-    public Object around(ProceedingJoinPoint point) throws Throwable
-    {
+    public Object around(ProceedingJoinPoint point) throws Throwable {
         DataSource dataSource = getDataSource(point);
 
         if (StringUtils.isNotNull(dataSource))

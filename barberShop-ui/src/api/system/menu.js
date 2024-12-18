@@ -18,11 +18,12 @@ export function getMenu(menuId) {
 }
 
 // 查询菜单下拉树结构
-export function treeselect() {
-  return request({
-    url: '/system/menu/treeselect',
-    method: 'get'
-  })
+export function treeselect(query) {
+    return request({
+        url: '/system/menu/treeselect',
+        method: 'get',
+        params: query
+    })
 }
 
 // 根据角色ID查询菜单下拉树结构

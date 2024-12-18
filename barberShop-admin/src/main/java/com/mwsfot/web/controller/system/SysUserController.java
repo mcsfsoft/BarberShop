@@ -1,5 +1,21 @@
 package com.mwsfot.web.controller.system;
 
+import com.mwsfot.system.common.annotation.Log;
+import com.mwsfot.system.common.constant.TenantConstants;
+import com.mwsfot.system.common.core.domain.AjaxResult;
+import com.mwsfot.system.common.core.page.TableDataInfo;
+import com.mwsfot.system.common.enums.BusinessType;
+import com.mwsfot.system.common.utils.SecurityUtils;
+import com.mwsfot.system.common.utils.StringUtils;
+import com.mwsfot.system.common.utils.poi.ExcelUtil;
+import com.mwsfot.system.controller.BaseController;
+import com.mwsfot.system.domain.entity.SysDept;
+import com.mwsfot.system.domain.entity.SysRole;
+import com.mwsfot.system.domain.entity.SysUser;
+import com.mwsfot.system.service.ISysDeptService;
+import com.mwsfot.system.service.ISysPostService;
+import com.mwsfot.system.service.ISysRoleService;
+import com.mwsfot.system.service.ISysUserService;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
@@ -16,21 +32,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.mwsfot.common.annotation.Log;
-import com.mwsfot.common.core.controller.BaseController;
-import com.mwsfot.common.core.domain.AjaxResult;
-import com.mwsfot.common.core.domain.entity.SysDept;
-import com.mwsfot.common.core.domain.entity.SysRole;
-import com.mwsfot.common.core.domain.entity.SysUser;
-import com.mwsfot.common.core.page.TableDataInfo;
-import com.mwsfot.common.enums.BusinessType;
-import com.mwsfot.common.utils.SecurityUtils;
-import com.mwsfot.common.utils.StringUtils;
-import com.mwsfot.common.utils.poi.ExcelUtil;
-import com.mwsfot.system.service.ISysDeptService;
-import com.mwsfot.system.service.ISysPostService;
-import com.mwsfot.system.service.ISysRoleService;
-import com.mwsfot.system.service.ISysUserService;
 
 /**
  * 用户信息
@@ -61,6 +62,7 @@ public class SysUserController extends BaseController
     public TableDataInfo list(SysUser user)
     {
         startPage();
+        checkIsAllowTenantId(user.getTenantId());
         List<SysUser> list = userService.selectUserList(user);
         return getDataTable(list);
     }
@@ -70,20 +72,25 @@ public class SysUserController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysUser user)
     {
+        checkIsAllowTenantId(user.getTenantId());
         List<SysUser> list = userService.selectUserList(user);
-        ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
+        ExcelUtil<SysUser> util = new ExcelUtil<>(SysUser.class);
         util.exportExcel(response, list, "用户数据");
     }
 
     @Log(title = "用户管理", businessType = BusinessType.IMPORT)
     @PreAuthorize("@ss.hasPermi('system:user:import')")
     @PostMapping("/importData")
-    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
-    {
+    public AjaxResult importData(MultipartFile file, boolean updateSupport, Long tenantId)
+        throws Exception {
+        checkIsAllowTenantId(tenantId);
+        if ( tenantId == null ) {
+            return error("导入失败, 平台ID不能为空");
+        }
         ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
         List<SysUser> userList = util.importExcel(file.getInputStream());
         String operName = getUsername();
-        String message = userService.importUser(userList, updateSupport, operName);
+        String message = userService.importUser(userList, updateSupport, operName, tenantId);
         return success(message);
     }
 
@@ -98,19 +105,19 @@ public class SysUserController extends BaseController
      * 根据用户编号获取详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:user:query')")
-    @GetMapping(value = { "/", "/{userId}" })
-    public AjaxResult getInfo(@PathVariable(value = "userId", required = false) Long userId)
-    {
+    @GetMapping(value = "/get")
+    public AjaxResult getInfo(Long userId, Long tenantId) {
+        checkIsAllowTenantId(tenantId);
         AjaxResult ajax = AjaxResult.success();
-        if (StringUtils.isNotNull(userId))
-        {
+        if ( StringUtils.isNotNull(userId) ) {
             userService.checkUserDataScope(userId);
             SysUser sysUser = userService.selectUserById(userId);
             ajax.put(AjaxResult.DATA_TAG, sysUser);
             ajax.put("postIds", postService.selectPostListByUserId(userId));
-            ajax.put("roleIds", sysUser.getRoles().stream().map(SysRole::getRoleId).collect(Collectors.toList()));
+            ajax.put("roleIds",
+                sysUser.getRoles().stream().map(SysRole::getRoleId).collect(Collectors.toList()));
         }
-        List<SysRole> roles = roleService.selectRoleAll();
+        List<SysRole> roles = roleService.selectRoleAll(tenantId);
         ajax.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
         ajax.put("posts", postService.selectPostAll());
         return ajax;
@@ -122,19 +129,23 @@ public class SysUserController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:user:add')")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody SysUser user)
-    {
-        deptService.checkDeptDataScope(user.getDeptId());
+    public AjaxResult add(@Validated @RequestBody SysUser user) {
+        Long tenantId = SecurityUtils.getTenantId();
+        if ( user.getTenantId() == null ) {
+            return error("新增用户'" + user.getUserName() + "'失败，平台不能为空");
+        }
+        if ( !tenantId.equals(TenantConstants.DEFAULT_SYSTEM_TENANT_ID) &&
+            !user.getTenantId().equals(tenantId) ) {
+            return error("新增用户'" + user.getUserName() + "'失败，无法注册其他平台账号");
+        }
+        deptService.checkDeptDataScope(user.getDeptId(), user.getTenantId());
         roleService.checkRoleDataScope(user.getRoleIds());
-        if (!userService.checkUserNameUnique(user))
-        {
+        if ( !userService.checkUserNameUnique(user) ) {
             return error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
-        }
-        else if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user))
-        {
+        } else if ( StringUtils.isNotEmpty(user.getPhonenumber()) &&
+            !userService.checkPhoneUnique(user) ) {
             return error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
-        }
-        else if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user))
+        } else if ( StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user) )
         {
             return error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
@@ -153,8 +164,9 @@ public class SysUserController extends BaseController
     {
         userService.checkUserAllowed(user);
         userService.checkUserDataScope(user.getUserId());
-        deptService.checkDeptDataScope(user.getDeptId());
+        deptService.checkDeptDataScope(user.getDeptId(), user.getTenantId());
         roleService.checkRoleDataScope(user.getRoleIds());
+        userService.checkUserTenantAllowed(user);
         if (!userService.checkUserNameUnique(user))
         {
             return error("修改用户'" + user.getUserName() + "'失败，登录账号已存在");
@@ -196,6 +208,7 @@ public class SysUserController extends BaseController
     {
         userService.checkUserAllowed(user);
         userService.checkUserDataScope(user.getUserId());
+        userService.checkUserTenantAllowed(user);
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         user.setUpdateBy(getUsername());
         return toAjax(userService.resetPwd(user));
@@ -211,6 +224,7 @@ public class SysUserController extends BaseController
     {
         userService.checkUserAllowed(user);
         userService.checkUserDataScope(user.getUserId());
+        userService.checkUserTenantAllowed(user);
         user.setUpdateBy(getUsername());
         return toAjax(userService.updateUserStatus(user));
     }
@@ -219,15 +233,26 @@ public class SysUserController extends BaseController
      * 根据用户编号获取授权角色
      */
     @PreAuthorize("@ss.hasPermi('system:user:query')")
-    @GetMapping("/authRole/{userId}")
-    public AjaxResult authRole(@PathVariable("userId") Long userId)
-    {
+    @GetMapping("/authRole/{userId}/{tenantId}")
+    public AjaxResult authRole(@PathVariable("userId") Long userId,
+                               @PathVariable("tenantId") Long tenantId) {
+        checkIsAllowTenantId(tenantId);
         AjaxResult ajax = AjaxResult.success();
         SysUser user = userService.selectUserById(userId);
-        List<SysRole> roles = roleService.selectRolesByUserId(userId);
+        List<SysRole> roles = roleService.selectRolesByUserIdAndTenantId(userId, tenantId);
         ajax.put("user", user);
-        ajax.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
+        ajax.put("roles", SysUser.isAdmin(userId) ? roles :
+            roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
         return ajax;
+    }
+
+    /**
+     * 查询当前用户所属租户是否存在可用角色
+     */
+    @GetMapping("/tenant/authRole/{tenantId}")
+    public AjaxResult tenantAuthRole(@PathVariable("tenantId") Long tenantId) {
+        checkIsAllowTenantId(tenantId);
+        return AjaxResult.success(roleService.selectTenantRoleNumsByTenantId(tenantId));
     }
 
     /**
@@ -236,8 +261,7 @@ public class SysUserController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:user:edit')")
     @Log(title = "用户管理", businessType = BusinessType.GRANT)
     @PutMapping("/authRole")
-    public AjaxResult insertAuthRole(Long userId, Long[] roleIds)
-    {
+    public AjaxResult insertAuthRole(Long userId, Long[] roleIds) {
         userService.checkUserDataScope(userId);
         roleService.checkRoleDataScope(roleIds);
         userService.insertUserAuth(userId, roleIds);
@@ -251,6 +275,7 @@ public class SysUserController extends BaseController
     @GetMapping("/deptTree")
     public AjaxResult deptTree(SysDept dept)
     {
+        checkIsAllowTenantId(dept.getTenantId());
         return success(deptService.selectDeptTreeList(dept));
     }
 }

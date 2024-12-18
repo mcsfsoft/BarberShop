@@ -1,14 +1,15 @@
 package ${packageName}.mapper;
 
 import java.util.List;
-import ${packageName}.domain.${ClassName};
+
+import ${packageName}.domain.entity.${ClassName};
 #if($table.sub)
-import ${packageName}.domain.${subClassName};
+import ${packageName}.domain.entity.${subClassName};
 #end
 
 /**
  * ${functionName}Mapper接口
- * 
+ *
  * @author ${author}
  * @date ${datetime}
  */

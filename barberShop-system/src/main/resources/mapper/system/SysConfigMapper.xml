@@ -71,6 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <insert id="insertConfig" parameterType="SysConfig">
         insert into sys_config (
+            <if test=" configId != null and configId != '' ">config_id,</if>
 			<if test="configName != null and configName != '' ">config_name,</if>
 			<if test="configKey != null and configKey != '' ">config_key,</if>
 			<if test="configValue != null and configValue != '' ">config_value,</if>
@@ -79,6 +80,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="remark != null and remark != ''">remark,</if>
  			create_time
         )values(
+        <if test=" configId != null and configId != '' ">#{configId},</if>
 			<if test="configName != null and configName != ''">#{configName},</if>
 			<if test="configKey != null and configKey != ''">#{configKey},</if>
 			<if test="configValue != null and configValue != ''">#{configValue},</if>
