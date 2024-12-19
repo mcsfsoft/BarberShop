@@ -7,11 +7,10 @@ mwsfot:
   # 版权年份
   copyrightYear: 2024
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: D:/ruoyi/uploadPath
+  profile: D:/mwsfot/uploadPath
   # 获取ip地址开关
   addressEnabled: true
-  # 验证码类型 math 数字计算 char 字符验证
-  captchaType: math
+
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
